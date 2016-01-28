@@ -1,6 +1,8 @@
 /bin
+/docs
 /Testing
 Makefile
+Doxyfile
 
 CMakeFiles
 CMakeCache.txt

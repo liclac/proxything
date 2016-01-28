@@ -7,7 +7,7 @@
 				"bin", "CMakeFiles"
 			],
 			"file_exclude_patterns": [
-				"Makefile",
+				"Makefile", "Doxyfile",
 				"CTestTestfile.cmake", "CMakeCache.txt", "cmake_install.cmake"
 			]
 		}

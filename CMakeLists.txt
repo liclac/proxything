@@ -17,3 +17,14 @@ add_subdirectory(src)
 # Add tests
 enable_testing()
 add_subdirectory(test)
+
+# Build documentation if Doxygen is installed
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+	configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
+	add_custom_target(docs ALL
+		COMMAND ${DOXYGEN_EXECUTABLE} VERBATIM
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		DEPENDS proxything
+	)
+endif()
