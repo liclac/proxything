@@ -1,7 +1,9 @@
 /bin
+/Testing
 Makefile
 
 CMakeFiles
 CMakeCache.txt
+CTestTestfile.cmake
 cmake_install.cmake
 proxything.sublime-workspace
