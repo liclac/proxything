@@ -64,6 +64,6 @@ namespace proxything
 		
 	protected:
 		/// Option definitions
-		po::options_description cli_options;
+		po::options_description m_options;
 	};
 }

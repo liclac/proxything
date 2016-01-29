@@ -9,7 +9,7 @@ using namespace proxything;
 
 app::app()
 {
-	cli_options.add_options()
+	m_options.add_options()
 		("help,?", "print a help message")
 		("quiet,q", "show less output")
 		("verbose,v", "show more output")
@@ -44,7 +44,7 @@ int app::run(int argc, char **argv)
 po::variables_map app::parse_args(int argc, char **argv)
 {
 	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, cli_options), vm);
+	po::store(po::parse_command_line(argc, argv, m_options), vm);
 	po::notify(vm);
 	
 	return vm;
@@ -55,7 +55,7 @@ void app::print_help()
 	std::cerr << "Usage: proxything [options]" << std::endl;
 	std::cerr << std::endl;
 	std::cerr << "Available options:" << std::endl;
-	std::cerr << cli_options;
+	std::cerr << m_options;
 }
 
 void app::init_logging(po::variables_map args)
