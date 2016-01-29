@@ -1,3 +1,6 @@
+#ifndef PROXYTHING_SERVER_H
+#define PROXYTHING_SERVER_H
+
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 
@@ -36,3 +39,5 @@ namespace proxything
 		const po::variables_map &m_config;
 	};
 }
+
+#endif

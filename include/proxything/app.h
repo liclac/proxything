@@ -1,3 +1,6 @@
+#ifndef PROXYTHING_APP_H
+#define PROXYTHING_APP_H
+
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 
@@ -72,3 +75,5 @@ namespace proxything
 		io_service m_service;
 	};
 }
+
+#endif
