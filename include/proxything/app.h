@@ -48,13 +48,6 @@ namespace proxything
 		void print_help();
 		
 		/**
-		 * Initializes application logging.
-		 * 
-		 * @param args Arguments
-		 */
-		void init_logging(po::variables_map args);
-		
-		/**
 		 * Main entry point.
 		 * 
 		 * @param  args Commandline arguments
@@ -63,6 +56,13 @@ namespace proxything
 		int run(po::variables_map args);
 		
 	protected:
+		/**
+		 * Initializes application logging.
+		 * 
+		 * @param args Arguments
+		 */
+		void init_logging(po::variables_map args);
+		
 		/// Option definitions
 		po::options_description m_options;
 	};

@@ -58,21 +58,6 @@ void app::print_help()
 	std::cerr << m_options;
 }
 
-void app::init_logging(po::variables_map args)
-{
-	auto level = boost::log::trivial::info;
-	
-	if (args.count("debug")) {
-		level = boost::log::trivial::trace;
-	} else if (args.count("verbose")) {
-		level = boost::log::trivial::debug;
-	} else if (args.count("quiet")) {
-		level = boost::log::trivial::warning;
-	}
-	
-	boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
-}
-
 int app::run(po::variables_map args)
 {
 	if (args.count("help")) {
@@ -88,4 +73,19 @@ int app::run(po::variables_map args)
 	BOOST_LOG_TRIVIAL(error) << "ERROR! Nothing is implemented!";
 	
 	return 0;
+}
+
+void app::init_logging(po::variables_map args)
+{
+	auto level = boost::log::trivial::info;
+	
+	if (args.count("debug")) {
+		level = boost::log::trivial::trace;
+	} else if (args.count("verbose")) {
+		level = boost::log::trivial::debug;
+	} else if (args.count("quiet")) {
+		level = boost::log::trivial::warning;
+	}
+	
+	boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
 }
