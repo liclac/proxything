@@ -11,6 +11,10 @@ set(CMAKE_CXX_STANDARD 11)
 # Include project headers
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
+# Find + link universally used libraries
+find_package(Boost 1.59 REQUIRED COMPONENTS program_options)
+include_directories(${Boost_INCLUDE_DIRS})
+
 # Build sources
 add_subdirectory(src)
 
