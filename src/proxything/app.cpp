@@ -24,6 +24,8 @@ int app::run(int argc, char **argv)
 	try {
 		args = parse_args(argc, argv);
 	} catch(po::error &e) {
+		// It's possible to catch specialized exceptions to write custom messages for each kind of
+		// error, but for now, the generic error's what() will suffice (it's just crudely worded)
 		std::cerr << e.what() << std::endl;
 		return 1;
 	}
