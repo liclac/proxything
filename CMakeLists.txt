@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
 # Find + link universally used libraries
+set(Boost_USE_STATIC_LIBS YES)
 find_package(Boost 1.59 REQUIRED COMPONENTS program_options)
 include_directories(${Boost_INCLUDE_DIRS})
 
