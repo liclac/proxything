@@ -12,6 +12,7 @@ server::server(io_service &service, const po::variables_map &config):
 	
 	ip::tcp::endpoint endpoint(ip::address::from_string(host), port);
 	m_acceptor.open(endpoint.protocol());
+	m_acceptor.set_option(ip::tcp::acceptor::reuse_address(true));
 	m_acceptor.bind(endpoint);
 	m_acceptor.listen();
 	
