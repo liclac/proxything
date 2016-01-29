@@ -62,7 +62,6 @@ void app::init_logging(po::variables_map args)
 {
 	auto level = boost::log::trivial::info;
 	
-	int verbosity = 1;
 	if (args.count("debug")) {
 		level = boost::log::trivial::trace;
 	} else if (args.count("verbose")) {
