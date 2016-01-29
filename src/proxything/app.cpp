@@ -1,4 +1,7 @@
 #include <proxything/app.h>
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
 #include <iostream>
 #include <string>
 
@@ -10,7 +13,7 @@ app::app()
 		("help,?", "print a help message")
 		("quiet,q", "show less output")
 		("verbose,v", "show more output")
-		("debug,V", "show lots of output")
+		("debug,V", "show even more output")
 		("host,h", po::value<std::string>()->default_value("127.0.0.1"), "host to bind to")
 		("port,p", po::value<unsigned short>()->default_value(12345), "port to bind to")
 	;
@@ -57,16 +60,18 @@ void app::print_help()
 
 void app::init_logging(po::variables_map args)
 {
+	auto level = boost::log::trivial::info;
+	
 	int verbosity = 1;
 	if (args.count("debug")) {
-		verbosity = 3;
+		level = boost::log::trivial::trace;
 	} else if (args.count("verbose")) {
-		verbosity = 2;
+		level = boost::log::trivial::debug;
 	} else if (args.count("quiet")) {
-		verbosity = 0;
+		level = boost::log::trivial::warning;
 	}
 	
-	std::cout << verbosity << std::endl;
+	boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
 }
 
 int app::run(po::variables_map args)
@@ -78,7 +83,10 @@ int app::run(po::variables_map args)
 	
 	init_logging(args);
 	
-	std::cout << "Run on " << args["host"].as<std::string>() << ":" << args["port"].as<unsigned short>() << std::endl;
+	BOOST_LOG_TRIVIAL(info) << "Run on " << args["host"].as<std::string>() << ":" << args["port"].as<unsigned short>();
+	BOOST_LOG_TRIVIAL(debug) << "Debug information goes here";
+	BOOST_LOG_TRIVIAL(trace) << "This isn't interesting to anyone else";
+	BOOST_LOG_TRIVIAL(error) << "ERROR! Nothing is implemented!";
 	
 	return 0;
 }
