@@ -8,6 +8,9 @@ app::app()
 {
 	cli_options.add_options()
 		("help,?", "print a help message")
+		("quiet,q", "show less output")
+		("verbose,v", "show more output")
+		("debug,V", "show lots of output")
 		("host,h", po::value<std::string>()->default_value("127.0.0.1"), "host to bind to")
 		("port,p", po::value<unsigned short>()->default_value(12345), "port to bind to")
 	;
@@ -52,12 +55,28 @@ void app::print_help()
 	std::cerr << cli_options;
 }
 
+void app::init_logging(po::variables_map args)
+{
+	int verbosity = 1;
+	if (args.count("debug")) {
+		verbosity = 3;
+	} else if (args.count("verbose")) {
+		verbosity = 2;
+	} else if (args.count("quiet")) {
+		verbosity = 0;
+	}
+	
+	std::cout << verbosity << std::endl;
+}
+
 int app::run(po::variables_map args)
 {
 	if (args.count("help")) {
 		print_help();
 		return 0;
 	}
+	
+	init_logging(args);
 	
 	std::cout << "Run on " << args["host"].as<std::string>() << ":" << args["port"].as<unsigned short>() << std::endl;
 	
