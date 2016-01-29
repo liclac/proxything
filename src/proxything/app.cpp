@@ -46,6 +46,9 @@ po::variables_map app::parse_args(int argc, char **argv)
 
 void app::print_help()
 {
+	std::cerr << "Usage: proxything [options]" << std::endl;
+	std::cerr << std::endl;
+	std::cerr << "Available options:" << std::endl;
 	std::cerr << cli_options;
 }
 
