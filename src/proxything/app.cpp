@@ -1,4 +1,5 @@
 #include <proxything/app.h>
+#include <proxything/server.h>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
@@ -67,10 +68,8 @@ int app::run(po::variables_map args)
 	
 	init_logging(args);
 	
-	BOOST_LOG_TRIVIAL(info) << "Run on " << args["host"].as<std::string>() << ":" << args["port"].as<unsigned short>();
-	BOOST_LOG_TRIVIAL(debug) << "Debug information goes here";
-	BOOST_LOG_TRIVIAL(trace) << "This isn't interesting to anyone else";
-	BOOST_LOG_TRIVIAL(error) << "ERROR! Nothing is implemented!";
+	server s(m_service, args);
+	m_service.run();
 	
 	return 0;
 }

@@ -1,7 +1,9 @@
+#include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 
 namespace proxything
 {
+	using namespace boost::asio;
 	namespace po = boost::program_options;
 	
 	/**
@@ -65,5 +67,8 @@ namespace proxything
 		
 		/// Option definitions
 		po::options_description m_options;
+		
+		/// IO Service
+		io_service m_service;
 	};
 }
