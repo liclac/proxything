@@ -1,3 +1,9 @@
-file(GLOB_RECURSE proxything_SOURCES *.cpp)
-add_executable(proxything ${proxything_SOURCES})
-target_link_libraries(proxything Threads::Threads ${Boost_LIBRARIES})
+# Build a library out of the non-main sources; allows easy code sharing with unit tests
+set(proxything_SOURCES
+	app.cpp
+)
+add_library(proxythinglib ${proxything_SOURCES})
+
+# Build an executable and link it to the core library
+add_executable(proxything main.cpp)
+target_link_libraries(proxything proxythinglib Threads::Threads ${Boost_LIBRARIES})

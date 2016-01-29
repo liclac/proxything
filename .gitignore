@@ -1,4 +1,5 @@
 /bin
+/lib
 /docs
 /Testing
 Makefile
