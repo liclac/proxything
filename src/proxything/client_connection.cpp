@@ -30,7 +30,7 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 	// Find the : delimiting the address and port
 	int colon_at = cmd.rfind(':');
 	if (colon_at == std::string::npos) {
-		throw std::invalid_argument("must be in the format address:port");
+		throw std::invalid_argument("Format: IP:port");
 	}
 	
 	// Split the command into host and port
