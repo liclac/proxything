@@ -2,6 +2,7 @@
 #include <proxything/proxy_server.h>
 #include <proxything/config.h>
 #include <boost/log/trivial.hpp>
+#include <sstream>
 #include <iostream>
 
 using namespace proxything;
@@ -100,6 +101,15 @@ void client_connection::read_command()
 			endpoint = parse(cmd);
 		} catch (std::invalid_argument &e) {
 			BOOST_LOG_TRIVIAL(error) << "Invalid command: " << e.what();
+			
+			std::stringstream msg_s;
+			msg_s << "ERROR: " << e.what() << "\r\n";
+			std::string msg = msg_s.str();
+			async_write(m_socket, buffer(msg), [&](const boost::system::error_code &ec, std::size_t size) {
+				if (ec) {
+					BOOST_LOG_TRIVIAL(error) << "Couldn't write error to client: " << ec;
+				}
+			});
 		}
 		
 		read_command();
