@@ -19,6 +19,11 @@ client_connection::~client_connection()
 	BOOST_LOG_TRIVIAL(trace) << "Client Connection destroyed";
 }
 
+void client_connection::connected()
+{
+	read_command();
+}
+
 void client_connection::read_command()
 {
 	// Retain the connection to keep it from getting deleted mid-transaction

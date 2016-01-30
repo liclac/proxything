@@ -24,17 +24,29 @@ namespace proxything
 		virtual ~client_connection();
 		
 		
-		
 		/**
-		 * Read a command from the socket.
+		 * Call when a connection has been established.
+		 */
+		void connected();
+		
+		
+		/// Returns the IO service
+		inline io_service& service() { return m_service; }
+		
+		/// Returns the underlying socket
+		inline ip::tcp::socket& socket() { return m_socket; }
+		
+		/// Returns the parent server
+		inline proxy_server& server() { return m_server; }
+		
+	protected:
+		/**
+		 * Read and execute a command from the socket.
+		 * 
+		 * Calls itself after receiving a command, until EOF or an error occurs.
 		 */
 		void read_command();
 		
-		
-		
-		inline ip::tcp::socket& socket() { return m_socket; }		///< Getter for m_socket
-		
-	protected:
 		proxy_server &m_server;					///< Parent server
 		io_service &m_service;					///< IO Service
 		ip::tcp::socket m_socket;				///< Socket

@@ -30,6 +30,9 @@ namespace proxything
 		/// Returns the IO service
 		inline io_service& service() { return m_service; }
 		
+		/// Returns the server's configuration
+		inline const po::variables_map& config() const { return m_config; }
+		
 	protected:
 		/**
 		 * Accepts a single connection.
