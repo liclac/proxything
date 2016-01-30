@@ -23,6 +23,8 @@ proxy_server::proxy_server(io_service &service, const po::variables_map &config)
 	accept();
 }
 
+proxy_server::proxy_server(io_service &service): m_service(service), m_acceptor(m_service) { }
+
 proxy_server::~proxy_server() { }
 
 void proxy_server::accept()

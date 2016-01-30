@@ -16,12 +16,17 @@ namespace proxything
 	{
 	public:
 		/**
-		 * Constructs a server.
+		 * Constructs and starts a server.
 		 * 
 		 * @param service IO Service to run on
 		 * @param config  Configuration
 		 */
 		proxy_server(io_service &service, const po::variables_map &config);
+		
+		/**
+		 * Constructs a stopped server.
+		 */
+		proxy_server(io_service &service);
 		
 		virtual ~proxy_server();
 		
@@ -31,7 +36,7 @@ namespace proxything
 		inline io_service& service() { return m_service; }
 		
 		/// Returns the server's configuration
-		inline const po::variables_map& config() const { return m_config; }
+		inline po::variables_map& config() { return m_config; }
 		
 	protected:
 		/**
@@ -43,7 +48,7 @@ namespace proxything
 		ip::tcp::acceptor m_acceptor;		///< Acceptor for new connections
 		
 		/// Configuration
-		const po::variables_map &m_config;
+		po::variables_map m_config;
 	};
 }
 
