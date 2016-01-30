@@ -38,6 +38,12 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 	std::string port_s = cmd.substr(colon_at + 1);
 	BOOST_LOG_TRIVIAL(trace) << "Split: host=" << address_s << ", port=" << port_s;
 	
+	// Handle [bracketed] IPv6 addresses
+	if (address_s[0] == '[' && address_s[address_s.size() - 1] == ']') {
+		address_s = address_s.substr(1, address_s.size() - 2);
+		BOOST_LOG_TRIVIAL(trace) << "Bracketed IPv6 address: " << address_s;
+	}
+	
 	// Parse the address
 	ip::address address;
 	try {
