@@ -1,5 +1,5 @@
-#ifndef PROXYTHING_SERVER_H
-#define PROXYTHING_SERVER_H
+#ifndef PROXYTHING_PROXY_SERVER_H
+#define PROXYTHING_PROXY_SERVER_H
 
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
@@ -12,7 +12,7 @@ namespace proxything
 	/**
 	 * A TCP server.
 	 */
-	class server
+	class proxy_server
 	{
 	public:
 		/**
@@ -21,9 +21,14 @@ namespace proxything
 		 * @param service IO Service to run on
 		 * @param config  Configuration
 		 */
-		server(io_service &service, const po::variables_map &config);
+		proxy_server(io_service &service, const po::variables_map &config);
 		
-		virtual ~server();
+		virtual ~proxy_server();
+		
+		
+		
+		/// Returns the IO service
+		inline io_service& service() { return m_service; }
 		
 	protected:
 		/**

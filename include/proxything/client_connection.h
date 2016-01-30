@@ -8,7 +8,7 @@ namespace proxything
 {
 	using namespace boost::asio;
 	
-	class server;
+	class proxy_server;
 	
 	/**
 	 * A connection from a client.
@@ -19,7 +19,7 @@ namespace proxything
 		/**
 		 * Constructs a client connection 
 		 */
-		client_connection(io_service &service, server &server);
+		client_connection(io_service &service, proxy_server &server);
 		
 		virtual ~client_connection();
 		
@@ -35,7 +35,7 @@ namespace proxything
 		inline ip::tcp::socket& socket() { return m_socket; }		///< Getter for m_socket
 		
 	protected:
-		server &m_server;						///< Parent server
+		proxy_server &m_server;					///< Parent server
 		io_service &m_service;					///< IO Service
 		ip::tcp::socket m_socket;				///< Socket
 		

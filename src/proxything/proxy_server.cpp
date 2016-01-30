@@ -1,4 +1,4 @@
-#include <proxything/server.h>
+#include <proxything/proxy_server.h>
 #include <proxything/client_connection.h>
 #include <boost/log/trivial.hpp>
 #include <memory>
@@ -6,7 +6,7 @@
 using namespace proxything;
 using namespace boost::asio;
 
-server::server(io_service &service, const po::variables_map &config):
+proxy_server::proxy_server(io_service &service, const po::variables_map &config):
 	m_service(service), m_config(config), m_acceptor(m_service)
 {
 	std::string host = m_config["host"].as<std::string>();
@@ -23,9 +23,9 @@ server::server(io_service &service, const po::variables_map &config):
 	accept();
 }
 
-server::~server() { }
+proxy_server::~proxy_server() { }
 
-void server::accept()
+void proxy_server::accept()
 {
 	BOOST_LOG_TRIVIAL(debug) << "Accepting new connection...";
 	
@@ -38,7 +38,7 @@ void server::accept()
 		}
 		
 		BOOST_LOG_TRIVIAL(info) << "Connection accepted!";
-		client->read_command();
+		client->connected();
 		
 		accept();
 	});

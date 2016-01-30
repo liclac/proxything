@@ -1,7 +1,7 @@
 # Build a library out of the non-main sources; allows easy code sharing with unit tests
 set(proxything_SOURCES
 	app.cpp
-	server.cpp
+	proxy_server.cpp
 	client_connection.cpp
 )
 add_library(proxythinglib ${proxything_SOURCES})

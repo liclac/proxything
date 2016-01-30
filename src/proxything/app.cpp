@@ -1,5 +1,5 @@
 #include <proxything/app.h>
-#include <proxything/server.h>
+#include <proxything/proxy_server.h>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
@@ -71,7 +71,7 @@ int app::run(po::variables_map args)
 	}
 	
 	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
-	server s(m_service, args);
+	proxy_server s(m_service, args);
 	
 	BOOST_LOG_TRIVIAL(trace) << "Starting IO Service...";
 	m_service.run();
