@@ -53,6 +53,7 @@ po::variables_map app::parse_args(int argc, char **argv)
 
 void app::print_help()
 {
+	BOOST_LOG_TRIVIAL(trace) << "Printing help...";
 	std::cerr << "Usage: proxything [options]" << std::endl;
 	std::cerr << std::endl;
 	std::cerr << "Available options:" << std::endl;
@@ -61,14 +62,18 @@ void app::print_help()
 
 int app::run(po::variables_map args)
 {
+	init_logging(args);
+	
 	if (args.count("help")) {
+		BOOST_LOG_TRIVIAL(trace) << "--help flag passed";
 		print_help();
 		return 0;
 	}
 	
-	init_logging(args);
-	
+	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
 	server s(m_service, args);
+	
+	BOOST_LOG_TRIVIAL(trace) << "Starting IO Service...";
 	m_service.run();
 	
 	return 0;
@@ -87,4 +92,5 @@ void app::init_logging(po::variables_map args)
 	}
 	
 	boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
+	BOOST_LOG_TRIVIAL(trace) << "Log filter level set";
 }
