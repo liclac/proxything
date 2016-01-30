@@ -27,15 +27,18 @@ void client_connection::connected()
 
 ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 {
+	// Find the : delimiting the address and port
 	int colon_at = cmd.rfind(':');
 	if (colon_at == std::string::npos) {
 		throw std::invalid_argument("must be in the format address:port");
 	}
 	
+	// Split the command into host and port
 	std::string address_s = cmd.substr(0, colon_at);
 	std::string port_s = cmd.substr(colon_at + 1);
 	BOOST_LOG_TRIVIAL(trace) << "Split: host=" << address_s << ", port=" << port_s;
 	
+	// Parse the address
 	ip::address address;
 	try {
 		address = ip::address::from_string(address_s);
@@ -44,6 +47,7 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 	}
 	BOOST_LOG_TRIVIAL(trace) << "Address: " << address.to_string();
 	
+	// Parse the port
 	int port;
 	try {
 		port = stoi(port_s);
@@ -52,6 +56,7 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 	}
 	BOOST_LOG_TRIVIAL(trace) << "Port: " << port;
 	
+	// Validate the port range
 	if (port < 1 || port > 65535) {
 		throw std::invalid_argument("Valid ports are 1-65535");
 	}
