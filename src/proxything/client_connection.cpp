@@ -21,6 +21,7 @@ client_connection::~client_connection()
 
 void client_connection::connected()
 {
+	BOOST_LOG_TRIVIAL(trace) << "Connection acknowledged";
 	read_command();
 }
 
