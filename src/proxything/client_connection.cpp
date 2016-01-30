@@ -25,6 +25,40 @@ void client_connection::connected()
 	read_command();
 }
 
+ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
+{
+	int colon_at = cmd.rfind(':');
+	if (colon_at == std::string::npos) {
+		throw std::invalid_argument("must be in the format address:port");
+	}
+	
+	std::string address_s = cmd.substr(0, colon_at);
+	std::string port_s = cmd.substr(colon_at + 1);
+	BOOST_LOG_TRIVIAL(trace) << "Split: host=" << address_s << ", port=" << port_s;
+	
+	ip::address address;
+	try {
+		address = ip::address::from_string(address_s);
+	} catch (boost::system::system_error &e) {
+		throw std::invalid_argument("Given address is not valid");
+	}
+	BOOST_LOG_TRIVIAL(trace) << "Address: " << address.to_string();
+	
+	int port;
+	try {
+		port = stoi(port_s);
+	} catch (std::invalid_argument) {
+		throw std::invalid_argument("Port is not a valid number");
+	}
+	BOOST_LOG_TRIVIAL(trace) << "Port: " << port;
+	
+	if (port < 1 || port > 65535) {
+		throw std::invalid_argument("Valid ports are 1-65535");
+	}
+	
+	return ip::tcp::endpoint(address, port);
+}
+
 void client_connection::read_command()
 {
 	// Retain the connection to keep it from getting deleted mid-transaction
@@ -49,6 +83,13 @@ void client_connection::read_command()
 		std::getline(cmd_s, cmd);
 		
 		BOOST_LOG_TRIVIAL(info) << "Command received: " << cmd;
+		
+		ip::tcp::endpoint endpoint;
+		try {
+			endpoint = parse(cmd);
+		} catch (std::invalid_argument &e) {
+			BOOST_LOG_TRIVIAL(error) << "Invalid command: " << e.what();
+		}
 		
 		read_command();
 	});

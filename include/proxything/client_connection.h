@@ -2,6 +2,7 @@
 #define PROXYTHING_CLIENT_CONNECTION_H
 
 #include <boost/asio.hpp>
+#include <string>
 #include <memory>
 
 namespace proxything
@@ -28,6 +29,19 @@ namespace proxything
 		 * Call when a connection has been established.
 		 */
 		void connected();
+		
+		
+		
+		/**
+		 * Parses a command into an endpoint.
+		 * 
+		 * @param  cmd  The received line
+		 * @return      A parsed endpoint
+		 * 
+		 * @throws std::invalid_argument Invalid command
+		 */
+		ip::tcp::endpoint parse(const std::string &cmd) const;
+		
 		
 		
 		/// Returns the IO service
