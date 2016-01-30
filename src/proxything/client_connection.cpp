@@ -1,4 +1,5 @@
 #include <proxything/client_connection.h>
+#include <proxything/remote_connection.h>
 #include <proxything/proxy_server.h>
 #include <proxything/config.h>
 #include <boost/log/trivial.hpp>
@@ -71,6 +72,15 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 	return ip::tcp::endpoint(address, port);
 }
 
+void client_connection::connect_remote(ip::tcp::endpoint endpoint)
+{
+	BOOST_LOG_TRIVIAL(info) << "Connecting to remote: " << endpoint.address().to_string() << ":" << endpoint.port();
+	auto remote = std::make_shared<remote_connection>(m_service, shared_from_this());
+	remote->socket().async_connect(endpoint, [&, remote](const boost::system::error_code &ec) {
+		remote->connected();
+	});
+}
+
 void client_connection::read_command()
 {
 	// Retain the connection to keep it from getting deleted mid-transaction
@@ -99,6 +109,7 @@ void client_connection::read_command()
 		ip::tcp::endpoint endpoint;
 		try {
 			endpoint = parse(cmd);
+			connect_remote(endpoint);
 		} catch (std::invalid_argument &e) {
 			BOOST_LOG_TRIVIAL(error) << "Invalid command: " << e.what();
 			

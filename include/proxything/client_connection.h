@@ -42,6 +42,14 @@ namespace proxything
 		 */
 		ip::tcp::endpoint parse(const std::string &cmd) const;
 		
+		/**
+		 * Fetches remote data from the specified host.
+		 * 
+		 * @param endpoint Endpoint to connect to
+		 * @see proxything::remote_connection
+		 */
+		void connect_remote(ip::tcp::endpoint endpoint);
+		
 		
 		
 		/// Returns the IO service

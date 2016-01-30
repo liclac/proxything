@@ -3,6 +3,7 @@ set(proxything_SOURCES
 	app.cpp
 	proxy_server.cpp
 	client_connection.cpp
+	remote_connection.cpp
 )
 add_library(proxythinglib ${proxything_SOURCES})
 
