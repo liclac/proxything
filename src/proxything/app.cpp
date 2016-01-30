@@ -5,6 +5,7 @@
 #include <boost/log/trivial.hpp>
 #include <iostream>
 #include <string>
+#include <memory>
 
 using namespace proxything;
 
@@ -75,10 +76,13 @@ int app::run(po::variables_map args)
 	unsigned short port = args["port"].as<unsigned short>();
 	
 	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
-	proxy_server s(m_service, host, port);
+	auto s = std::make_shared<proxy_server>(m_service);
+	s->start(host, port);
 	
 	BOOST_LOG_TRIVIAL(trace) << "Starting IO Service...";
 	m_service.run();
+	
+	BOOST_LOG_TRIVIAL(trace) << "IO Service Stopped!";
 	
 	return 0;
 }

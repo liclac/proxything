@@ -6,13 +6,8 @@
 using namespace proxything;
 using namespace boost::asio;
 
-proxy_server::proxy_server(io_service &service, const std::string &host, unsigned short port):
-	m_service(service), m_acceptor(m_service)
-{
-	start(host, port);
-}
-
-proxy_server::proxy_server(io_service &service): m_service(service), m_acceptor(m_service) { }
+proxy_server::proxy_server(io_service &service):
+	m_service(service), m_acceptor(m_service) { }
 
 proxy_server::~proxy_server() { }
 
@@ -33,8 +28,10 @@ void proxy_server::accept()
 {
 	BOOST_LOG_TRIVIAL(debug) << "Accepting new connection...";
 	
-	auto client = std::make_shared<client_connection>(m_service, *this);
-	m_acceptor.async_accept(client->socket(), [=](const boost::system::error_code &ec) {
+	auto self = shared_from_this();
+	
+	auto client = std::make_shared<client_connection>(m_service, self);
+	m_acceptor.async_accept(client->socket(), [&, client](const boost::system::error_code &ec) {
 		if (ec) {
 			BOOST_LOG_TRIVIAL(warning) << "Error accepting connection: " << ec;
 			accept();

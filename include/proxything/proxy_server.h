@@ -3,6 +3,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include <memory>
 
 namespace proxything
 {
@@ -12,18 +13,9 @@ namespace proxything
 	/**
 	 * A TCP server.
 	 */
-	class proxy_server
+	class proxy_server : public std::enable_shared_from_this<proxy_server>
 	{
 	public:
-		/**
-		 * Constructs and starts a server.
-		 * 
-		 * @param service IO Service to run on
-		 * @param host    Host to bind to
-		 * @param port    Port to bind to
-		 */
-		proxy_server(io_service &service, const std::string &host, unsigned short port);
-		
 		/**
 		 * Constructs a stopped server.
 		 */

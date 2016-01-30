@@ -8,7 +8,7 @@
 using namespace proxything;
 using namespace boost::asio;
 
-client_connection::client_connection(io_service &service, proxy_server &server):
+client_connection::client_connection(io_service &service, std::shared_ptr<proxy_server> server):
 	m_service(service), m_socket(m_service), m_server(server),
 	m_client_buffer(PROXYTHING_CLIENT_COMMAND_BUFFER_SIZE)
 {

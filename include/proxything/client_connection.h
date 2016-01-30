@@ -20,7 +20,7 @@ namespace proxything
 		/**
 		 * Constructs a client connection.
 		 */
-		client_connection(io_service &service, proxy_server &server);
+		client_connection(io_service &service, std::shared_ptr<proxy_server> server);
 		
 		virtual ~client_connection();
 		
@@ -51,7 +51,7 @@ namespace proxything
 		inline ip::tcp::socket& socket() { return m_socket; }
 		
 		/// Returns the parent server
-		inline proxy_server& server() { return m_server; }
+		inline std::shared_ptr<proxy_server> server() { return m_server; }
 		
 	protected:
 		/**
@@ -61,9 +61,10 @@ namespace proxything
 		 */
 		void read_command();
 		
-		proxy_server &m_server;					///< Parent server
 		io_service &m_service;					///< IO Service
 		ip::tcp::socket m_socket;				///< Socket
+		
+		std::shared_ptr<proxy_server> m_server;	///< Parent server
 		
 		streambuf m_client_buffer;				///< Buffer for client commands
 	};
