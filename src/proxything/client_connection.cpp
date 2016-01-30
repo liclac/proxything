@@ -11,7 +11,7 @@ using namespace boost::asio;
 
 client_connection::client_connection(io_service &service, std::shared_ptr<proxy_server> server):
 	m_service(service), m_socket(m_service), m_server(server),
-	m_client_buffer(PROXYTHING_CLIENT_COMMAND_BUFFER_SIZE)
+	m_buf(PROXYTHING_CLIENT_BUFFER_SIZE)
 {
 	BOOST_LOG_TRIVIAL(trace) << "Client Connection created";
 }
@@ -87,7 +87,7 @@ void client_connection::read_command()
 	auto self = shared_from_this();
 	
 	BOOST_LOG_TRIVIAL(trace) << "Awaiting command...";
-	async_read_until(m_socket, m_client_buffer, "\r\n", [&, self](const boost::system::error_code &ec, std::size_t size) {
+	async_read_until(m_socket, m_buf, "\r\n", [&, self](const boost::system::error_code &ec, std::size_t size) {
 		if (ec) {
 			if (ec == error::eof) {
 				BOOST_LOG_TRIVIAL(info) << "Connection closed";
@@ -100,7 +100,7 @@ void client_connection::read_command()
 		
 		BOOST_LOG_TRIVIAL(trace) << "Parsing command...";
 		
-		std::istream cmd_s(&m_client_buffer);
+		std::istream cmd_s(&m_buf);
 		std::string cmd;
 		std::getline(cmd_s, cmd);
 		

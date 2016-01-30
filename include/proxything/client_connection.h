@@ -74,7 +74,7 @@ namespace proxything
 		
 		std::shared_ptr<proxy_server> m_server;	///< Parent server
 		
-		streambuf m_client_buffer;				///< Buffer for client commands
+		streambuf m_buf;						///< Buffer for client commands
 	};
 }
 
