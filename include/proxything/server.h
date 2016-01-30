@@ -23,7 +23,6 @@ namespace proxything
 		 */
 		server(io_service &service, const po::variables_map &config);
 		
-		/// Destructor
 		virtual ~server();
 		
 	protected:

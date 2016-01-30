@@ -20,9 +20,6 @@ namespace proxything
 		 */
 		app();
 		
-		/**
-		 * Destructor.
-		 */
 		virtual ~app();
 		
 		
