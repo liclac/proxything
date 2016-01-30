@@ -70,8 +70,12 @@ int app::run(po::variables_map args)
 		return 0;
 	}
 	
+	BOOST_LOG_TRIVIAL(trace) << "Reading config...";
+	std::string host = args["host"].as<std::string>();
+	unsigned short port = args["port"].as<unsigned short>();
+	
 	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
-	proxy_server s(m_service, args);
+	proxy_server s(m_service, host, port);
 	
 	BOOST_LOG_TRIVIAL(trace) << "Starting IO Service...";
 	m_service.run();

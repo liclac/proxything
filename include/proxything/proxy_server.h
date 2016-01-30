@@ -19,9 +19,10 @@ namespace proxything
 		 * Constructs and starts a server.
 		 * 
 		 * @param service IO Service to run on
-		 * @param config  Configuration
+		 * @param host    Host to bind to
+		 * @param port    Port to bind to
 		 */
-		proxy_server(io_service &service, const po::variables_map &config);
+		proxy_server(io_service &service, const std::string &host, unsigned short port);
 		
 		/**
 		 * Constructs a stopped server.
@@ -32,11 +33,18 @@ namespace proxything
 		
 		
 		
+		/**
+		 * Starts the server.
+		 * 
+		 * @param host Host to bind to
+		 * @param port Port to bind to
+		 */
+		void start(const std::string &host, unsigned short port);
+		
+		
+		
 		/// Returns the IO service
 		inline io_service& service() { return m_service; }
-		
-		/// Returns the server's configuration
-		inline po::variables_map& config() { return m_config; }
 		
 	protected:
 		/**
@@ -46,9 +54,6 @@ namespace proxything
 		
 		io_service &m_service;				///< IO Service
 		ip::tcp::acceptor m_acceptor;		///< Acceptor for new connections
-		
-		/// Configuration
-		po::variables_map m_config;
 	};
 }
 

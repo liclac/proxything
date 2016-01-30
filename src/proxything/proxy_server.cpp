@@ -6,12 +6,18 @@
 using namespace proxything;
 using namespace boost::asio;
 
-proxy_server::proxy_server(io_service &service, const po::variables_map &config):
-	m_service(service), m_config(config), m_acceptor(m_service)
+proxy_server::proxy_server(io_service &service, const std::string &host, unsigned short port):
+	m_service(service), m_acceptor(m_service)
 {
-	std::string host = m_config["host"].as<std::string>();
-	unsigned short port = m_config["port"].as<unsigned short>();
-	
+	start(host, port);
+}
+
+proxy_server::proxy_server(io_service &service): m_service(service), m_acceptor(m_service) { }
+
+proxy_server::~proxy_server() { }
+
+void proxy_server::start(const std::string &host, unsigned short port)
+{
 	ip::tcp::endpoint endpoint(ip::address::from_string(host), port);
 	m_acceptor.open(endpoint.protocol());
 	m_acceptor.set_option(ip::tcp::acceptor::reuse_address(true));
@@ -22,10 +28,6 @@ proxy_server::proxy_server(io_service &service, const po::variables_map &config)
 	
 	accept();
 }
-
-proxy_server::proxy_server(io_service &service): m_service(service), m_acceptor(m_service) { }
-
-proxy_server::~proxy_server() { }
 
 void proxy_server::accept()
 {
