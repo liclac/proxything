@@ -17,7 +17,7 @@ namespace proxything
 	{
 	public:
 		/**
-		 * Constructs a client connection 
+		 * Constructs a client connection.
 		 */
 		client_connection(io_service &service, proxy_server &server);
 		
