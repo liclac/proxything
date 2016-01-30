@@ -1,5 +1,7 @@
 #include <proxything/server.h>
+#include <proxything/client_connection.h>
 #include <boost/log/trivial.hpp>
+#include <memory>
 
 using namespace proxything;
 using namespace boost::asio;
@@ -27,9 +29,17 @@ void server::accept()
 {
 	BOOST_LOG_TRIVIAL(debug) << "Accepting new connection...";
 	
-	ip::tcp::socket socket(m_service);
-	m_acceptor.async_accept(socket, [=](const boost::system::error_code &ec) {
-		BOOST_LOG_TRIVIAL(info) << "-> Connection accepted!";
+	auto client = std::make_shared<client_connection>(m_service, *this);
+	m_acceptor.async_accept(client->socket(), [=](const boost::system::error_code &ec) {
+		if (ec) {
+			BOOST_LOG_TRIVIAL(warning) << "Error accepting connection: " << ec;
+			accept();
+			return;
+		}
+		
+		BOOST_LOG_TRIVIAL(info) << "Connection accepted!";
+		client->read_command();
+		
 		accept();
 	});
 }
