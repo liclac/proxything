@@ -5,8 +5,10 @@ set(proxything_TESTS
 	test_client_connection
 )
 
+add_library(test_stub stub.cpp)
+
 foreach(target ${proxything_TESTS})
-	add_executable(${target} stub.cpp "${target}.cpp")
-	target_link_libraries(${target} proxythinglib Threads::Threads ${Boost_LIBRARIES})
+	add_executable(${target} "${target}.cpp")
+	target_link_libraries(${target} test_stub proxythinglib Threads::Threads ${Boost_LIBRARIES})
 	add_test(NAME ${target} COMMAND ${target})
 endforeach()
