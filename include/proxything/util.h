@@ -9,6 +9,8 @@ namespace proxything
 {
 	namespace util
 	{
+		using namespace boost::asio;
+		
 		/**
 		 * Wrapper for a work-bound callback.
 		 * 
