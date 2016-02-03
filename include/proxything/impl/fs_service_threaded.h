@@ -91,6 +91,36 @@ namespace proxything
 				});
 			}
 			
+			/**
+			 * Implementation for fs_service::async_read_some().
+			 */
+			template<typename BufsT>
+			void async_read_some(io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
+			{
+				m_iservice.post([=, &service, &impl]{
+					boost::system::error_code ec;
+					std::size_t size = 0;
+					
+					for (auto it = buffers_begin(buffers); it != buffers_end(buffers); ++it) {
+						char val;
+						impl.stream.get(val);
+						
+						if (impl.stream.eof()) {
+							ec = error::eof;
+							break;
+						} else if (!impl.stream) {
+							ec = boost::system::error_code(errno, boost::system::get_generic_category());
+							break;
+						}
+						
+						*it = val;
+						++size;
+					}
+					
+					service.dispatch(boost::bind(cb, ec, size));
+				});
+			}
+			
 		protected:
 			io_service m_iservice;		///< Internal IO service
 			io_service::work *m_iwork;	///< Keeping the service alive

@@ -35,6 +35,19 @@ namespace proxything
 		{
 			get_service().async_open(get_implementation(), filename, cb);
 		}
+		
+		/**
+		 * Asynchronously reads some data.
+		 * 
+		 * @tparam BufsT   Mutable buffer type
+		 * @param  buffers Buffers to read into
+		 * @param  cb      Callback
+		 */
+		template<typename BufsT>
+		void async_read_some(const BufsT &buffers, fs_service::ReadHandler cb)
+		{
+			get_service().async_read_some(get_implementation(), buffers, cb);
+		}
 	};
 }
 

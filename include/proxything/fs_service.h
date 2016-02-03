@@ -50,6 +50,13 @@ namespace proxything
 		typedef std::function<void(const boost::system::error_code &ec)> OpenHandler;
 		
 		/**
+		 * Callback type for reading a file.
+		 * 
+		 * @param ec Error code
+		 */
+		typedef std::function<void(const boost::system::error_code &ec, std::size_t size)> ReadHandler;
+		
+		/**
 		 * Constructor.
 		 * 
 		 * @param  service Parent IO service
@@ -86,9 +93,22 @@ namespace proxything
 		 * @param filename Filename
 		 * @param cb       Callback
 		 */
-		void async_open(implementation_type& impl, const std::string &filename, OpenHandler cb)
+		void async_open(implementation_type &impl, const std::string &filename, OpenHandler cb)
 		{
 			m_impl.async_open(get_io_service(), impl, filename, util::work_bound(get_io_service(), cb));
+		}
+		
+		/**
+		 * Asynchronously reads a file.
+		 * 
+		 * @param impl    Implementation
+		 * @param buffers Buffers
+		 * @param cb      Callback
+		 */
+		template<typename BufsT>
+		void async_read_some(implementation_type &impl, const BufsT &buffers, fs_service::ReadHandler cb)
+		{
+			m_impl.async_read_some(get_io_service(), impl, buffers, util::work_bound(get_io_service(), cb));
 		}
 		
 	protected:
