@@ -66,7 +66,7 @@ namespace proxything
 		 */
 		void construct(implementation_type& impl)
 		{
-			m_impl.construct(impl);
+			m_impl.construct(get_io_service(), impl);
 		}
 		
 		/**
@@ -76,7 +76,7 @@ namespace proxything
 		 */
 		void destroy(implementation_type& impl)
 		{
-			m_impl.destroy(impl);
+			m_impl.destroy(get_io_service(), impl);
 		}
 		
 		/**
@@ -88,7 +88,7 @@ namespace proxything
 		 */
 		void async_open(implementation_type& impl, const std::string &filename, OpenHandler cb)
 		{
-			m_impl.async_open(impl, filename, util::work_bound(get_io_service(), cb));
+			m_impl.async_open(get_io_service(), impl, filename, util::work_bound(get_io_service(), cb));
 		}
 		
 	protected:

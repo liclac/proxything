@@ -58,7 +58,7 @@ namespace proxything
 			/**
 			 * Implementation for fs_service::construct().
 			 */
-			void construct(implementation_type& impl)
+			void construct(io_service &service, implementation_type &impl)
 			{
 				
 			}
@@ -66,7 +66,7 @@ namespace proxything
 			/**
 			 * Implementation for fs_service::destroy().
 			 */
-			void destroy(implementation_type& impl)
+			void destroy(io_service &service, implementation_type &impl)
 			{
 				
 			}
@@ -74,15 +74,19 @@ namespace proxything
 			/**
 			 * Implementation for fs_service::async_open().
 			 */
-			void async_open(implementation_type& impl, const std::string &filename, std::function<void(const boost::system::error_code &ec)> cb)
+			void async_open(io_service &service, implementation_type &impl, const std::string &filename, std::function<void(const boost::system::error_code &ec)> cb)
 			{
-				m_iservice.post([=, &impl]{
+				m_iservice.post([=, &service, &impl]{
 					impl.stream.open(filename);
 					
 					if (impl.stream.good()) {
-						cb({});
+						service.dispatch([=]{
+							cb({});
+						});
 					} else {
-						cb(boost::system::error_code(errno, boost::system::get_generic_category()));
+						service.dispatch([=]{
+							cb(boost::system::error_code(errno, boost::system::get_generic_category()));
+						});
 					}
 				});
 			}
