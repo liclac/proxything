@@ -16,10 +16,13 @@ SCENARIO("files can be opened")
 		WHEN("it's opened")
 		{
 			fs_entry entry(service);
-			entry.async_open(path, [=](const boost::system::error_code &ec) {
-				std::cout << ec << std::endl;
+			boost::system::error_code ec;
+			entry.async_open(path, [&](const boost::system::error_code &ec_) {
+				ec = ec_;
 			});
 			service.run();
+			
+			REQUIRE(!ec);
 		}
 	}
 }
