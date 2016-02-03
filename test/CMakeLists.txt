@@ -3,6 +3,7 @@ include_directories("${CMAKE_SOURCE_DIR}/vendor/catch/include")
 set(proxything_TESTS
 	test_test
 	test_client_connection
+	test_fs_entry
 )
 
 add_library(test_stub stub.cpp)
