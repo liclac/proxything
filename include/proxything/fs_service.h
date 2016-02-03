@@ -64,7 +64,7 @@ namespace proxything
 		 * 
 		 * @param impl Implementation
 		 */
-		void construct(implementation_type& impl)
+		void construct(implementation_type &impl)
 		{
 			m_impl.construct(get_io_service(), impl);
 		}
@@ -74,7 +74,7 @@ namespace proxything
 		 * 
 		 * @param impl Implementation
 		 */
-		void destroy(implementation_type& impl)
+		void destroy(implementation_type &impl)
 		{
 			m_impl.destroy(get_io_service(), impl);
 		}
