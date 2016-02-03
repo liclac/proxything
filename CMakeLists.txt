@@ -14,7 +14,7 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 
 # Find Boost
 add_definitions(-DBOOST_ALL_DYN_LINK=1)
-find_package(Boost 1.59 REQUIRED COMPONENTS program_options log thread system exception)
+find_package(Boost 1.59 REQUIRED COMPONENTS program_options log filesystem thread system exception)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # Find the system thread library

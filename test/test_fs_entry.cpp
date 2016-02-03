@@ -1,6 +1,6 @@
 #include <catch.hpp>
 #include <proxything/fs_entry.h>
-#include <iostream>
+#include <proxything/util.h>
 
 using namespace proxything;
 using namespace boost::asio;
