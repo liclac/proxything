@@ -9,20 +9,23 @@ SCENARIO("files can be opened")
 {
 	io_service service;
 	
-	GIVEN("a path")
+	GIVEN("a file")
 	{
-		std::string path("/tmp/proxything_test.txt");
+		util::tmp_file file;
 		
 		WHEN("it's opened")
 		{
 			fs_entry entry(service);
 			boost::system::error_code ec;
-			entry.async_open(path, [&](const boost::system::error_code &ec_) {
+			entry.async_open(file.path(), [&](const boost::system::error_code &ec_) {
 				ec = ec_;
 			});
 			service.run();
 			
-			REQUIRE(!ec);
+			THEN("it shouldn't error")
+			{
+				REQUIRE_FALSE(ec);
+			}
 		}
 	}
 }
