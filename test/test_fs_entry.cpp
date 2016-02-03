@@ -11,7 +11,7 @@ SCENARIO("files can be opened")
 	
 	GIVEN("a file")
 	{
-		util::tmp_file file;
+		util::tmp_file file("Lorem ipsum dolor sit amet");
 		
 		WHEN("it's opened")
 		{

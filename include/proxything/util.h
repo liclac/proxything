@@ -40,7 +40,8 @@ namespace proxything
 			/**
 			 * Creates a temporary file.
 			 */
-			tmp_file(): m_path((fs::temp_directory_path() / fs::unique_path()).string())
+			tmp_file(std::string content = ""):
+				m_path((fs::temp_directory_path() / fs::unique_path()).string())
 			{
 				std::ofstream stream(m_path);
 				if (!stream) {
@@ -48,7 +49,7 @@ namespace proxything
 					ss << "Couldn't open: " << m_path << " (" << errno << ")";
 					throw std::runtime_error(ss.str());
 				}
-				stream << "Lorem ipsum dolor sit amet" << std::endl;
+				stream << content;
 			}
 			
 			virtual ~tmp_file()
