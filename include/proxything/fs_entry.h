@@ -50,6 +50,16 @@ namespace proxything
 		}
 		
 		/**
+		 * Asynchronously closes the file.
+		 * 
+		 * @param cb Callback
+		 */
+		void async_close(fs_service::CloseHandler cb = nullptr)
+		{
+			get_service().async_close(get_implementation(), cb);
+		}
+		
+		/**
 		 * Asynchronously reads some data.
 		 * 
 		 * @tparam BufsT   Mutable buffer type

@@ -19,6 +19,7 @@ SCENARIO("files can be opened")
 			boost::system::error_code ec;
 			entry.async_open(file.path(), [&](const boost::system::error_code &ec_) {
 				ec = ec_;
+				entry.async_close();
 			});
 			service.run();
 			
@@ -41,6 +42,8 @@ SCENARIO("files can be opened")
 				async_read(entry, buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
 					read_ec = ec;
 					read_size = size;
+					
+					entry.async_close();
 				});
 			});
 			service.run();

@@ -50,6 +50,13 @@ namespace proxything
 		typedef std::function<void(const boost::system::error_code &ec)> OpenHandler;
 		
 		/**
+		 * Callback type for closing a file.
+		 * 
+		 * @param ec Error code
+		 */
+		typedef std::function<void(const boost::system::error_code &ec)> CloseHandler;
+		
+		/**
 		 * Callback type for reading a file.
 		 * 
 		 * @param ec Error code
@@ -97,6 +104,17 @@ namespace proxything
 		void async_open(implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, OpenHandler cb)
 		{
 			m_impl.async_open(get_io_service(), impl, filename, mode, util::work_bound(get_io_service(), cb));
+		}
+		
+		/**
+		 * Asynchronously closes a file.
+		 * 
+		 * @param impl Implementation
+		 * @param cb   Callback
+		 */
+		void async_close(implementation_type &impl, CloseHandler cb)
+		{
+			m_impl.async_close(get_io_service(), impl, util::work_bound(get_io_service(), cb));
 		}
 		
 		/**

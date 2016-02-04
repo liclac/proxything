@@ -92,6 +92,18 @@ namespace proxything
 			}
 			
 			/**
+			 * Implementation for fs_service::async_close().
+			 */
+			void async_close(io_service &service, implementation_type &impl, std::function<void(const boost::system::error_code &ec)> cb)
+			{
+				m_iservice.post([=, &service, &impl]{
+					impl.stream.close();
+					
+					service.dispatch(boost::bind(cb, boost::system::error_code()));
+				});
+			}
+			
+			/**
 			 * Implementation for fs_service::async_read_some().
 			 */
 			template<typename BufsT>
@@ -114,6 +126,30 @@ namespace proxything
 						}
 						
 						*it = val;
+						++size;
+					}
+					
+					service.dispatch(boost::bind(cb, ec, size));
+				});
+			}
+			
+			/**
+			 * Implementaiton for fs_service::async_write_some().
+			 */
+			template<typename BufsT>
+			void async_write_some(io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
+			{
+				m_iservice.post([=, &service, &impl]{
+					boost::system::error_code ec;
+					std::size_t size = 0;
+					
+					impl.stream.clear();
+					for (auto it = buffers_begin(buffers); it != buffers_end(buffers); ++it) {
+						impl.stream.put(*it);
+						if (!impl.stream) {
+							ec = boost::system::error_code(errno, boost::system::get_generic_category());
+							break;
+						}
 						++size;
 					}
 					
