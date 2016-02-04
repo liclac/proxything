@@ -27,10 +27,7 @@ namespace proxything
 		 * Constructs a cache manager.
 		 */
 		cache_manager(io_service &service):
-			m_service(service), m_path(fs::temp_directory_path())
-		{
-			
-		}
+			m_service(service), m_path(fs::temp_directory_path()) { }
 		
 		virtual ~cache_manager() { }
 		

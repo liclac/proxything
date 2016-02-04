@@ -65,11 +65,8 @@ namespace proxything
 		 */
 		void init_logging(po::variables_map args);
 		
-		/// Option definitions
-		po::options_description m_options;
-		
-		/// IO Service
-		io_service m_service;
+		po::options_description m_options;		///< Option definitions
+		io_service m_service;					///< IO Service
 	};
 }
 

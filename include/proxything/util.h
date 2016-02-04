@@ -65,14 +65,17 @@ namespace proxything
 				stream << content;
 			}
 			
+			/**
+			 * Destructor.
+			 * 
+			 * Removes the temporary file from disk.
+			 */
 			virtual ~tmp_file()
 			{
 				fs::remove(m_path);
 			}
 			
-			/**
-			 * Returns the path to the file.
-			 */
+			/// Returns the path to the file.
 			inline const std::string& path() { return m_path; }
 			
 		protected:
