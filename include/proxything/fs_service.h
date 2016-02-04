@@ -134,7 +134,7 @@ namespace proxything
 		 * @param cb      Callback
 		 */
 		template<typename BufsT>
-		void async_read_some(implementation_type &impl, const BufsT &buffers, fs_service::ReadHandler cb)
+		void async_read_some(implementation_type &impl, const BufsT &buffers, ReadHandler cb)
 		{
 			m_impl.async_read_some(get_io_service(), impl, buffers, util::work_bound(get_io_service(), cb));
 		}
