@@ -23,7 +23,7 @@ namespace proxything
 		 * task is completed.
 		 */
 		template<typename R, typename... Args>
-		std::function<R(Args...)> work_bound(io_service& service, std::function<R(Args...)> fn)
+		inline std::function<R(Args...)> work_bound(io_service& service, std::function<R(Args...)> fn)
 		{
 			auto work = std::make_shared<io_service::work>(service);
 			return [work, fn](Args&&... args) {
