@@ -112,7 +112,7 @@ namespace proxything
 						ec = boost::system::error_code(errno, boost::system::get_generic_category());
 					}
 					
-					cb(ec);
+					service.dispatch(boost::bind(cb, ec));
 				});
 			}
 			
