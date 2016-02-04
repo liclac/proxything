@@ -27,7 +27,9 @@ namespace proxything
 		{
 			auto work = std::make_shared<io_service::work>(service);
 			return [work, fn](Args&&... args) {
-				return fn(std::forward<Args>(args)...);
+				if (fn) {
+					return fn(std::forward<Args>(args)...);
+				}
 			};
 		}
 		
