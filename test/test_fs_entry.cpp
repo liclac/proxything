@@ -99,4 +99,53 @@ SCENARIO("files can be opened")
 			}
 		}
 	}
+	
+	GIVEN("a path")
+	{
+		std::string path = util::tmp_path();
+		
+		WHEN("it's atomically written")
+		{
+			fs_entry entry(service);
+			boost::system::error_code open_ec, write_ec, close_ec;
+			bool exists_1, exists_2, exists_3;
+			
+			std::string buf_str("This is a test string.");
+			std::vector<char> buf(buf_str.begin(), buf_str.end());
+			
+			entry.async_open_atomic(path, [&](const boost::system::error_code &ec) {
+				open_ec = ec;
+				if (ec) { return; }
+				
+				exists_1 = fs::exists(path);
+				
+				async_write(entry, buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
+					write_ec = ec;
+					
+					exists_2 = fs::exists(path);
+					
+					entry.async_close([&](const boost::system::error_code &ec) {
+						close_ec = ec;
+						
+						exists_3 = fs::exists(path);
+					});
+				});
+			});
+			service.run();
+			
+			THEN("it shouldn't error")
+			{
+				REQUIRE_FALSE(open_ec);
+				REQUIRE_FALSE(write_ec);
+				REQUIRE_FALSE(close_ec);
+			}
+			
+			THEN("it should not exist until it's closed")
+			{
+				CHECK_FALSE(exists_1);
+				CHECK_FALSE(exists_2);
+				CHECK(exists_3);
+			}
+		}
+	}
 }

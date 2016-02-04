@@ -1,13 +1,17 @@
 #ifndef PROXYTHING_IMPL_FS_SERVICE_THREADED_H
 #define PROXYTHING_IMPL_FS_SERVICE_THREADED_H
 
+#include <proxything/util.h>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/filesystem.hpp>
 #include <fstream>
+#include <mutex>
 
 namespace proxything
 {
 	using namespace boost::asio;
+	namespace fs = boost::filesystem;
 	
 	namespace impl
 	{
@@ -30,6 +34,21 @@ namespace proxything
 			{
 				/// File stream connected to the underlying file
 				std::fstream stream;
+				
+				/// Filename
+				std::string filename;
+				
+				/// Is the file opened for atomic writes?
+				bool atomic = false;
+				
+				/// Is the atomic operation finished?
+				bool atomic_finished = false;
+				
+				/// Temporary filename for atomic writes
+				std::string temp_filename;
+				
+				/// Mutex used for finalization
+				std::mutex mutex;
 			};
 			
 			/**
@@ -68,26 +87,32 @@ namespace proxything
 			 */
 			void destroy(io_service &service, implementation_type &impl)
 			{
-				
+				finalize(impl);
 			}
 			
 			/**
 			 * Implementation for fs_service::async_open().
 			 */
-			void async_open(io_service &service, implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, std::function<void(const boost::system::error_code &ec)> cb)
+			void async_open(io_service &service, implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, bool atomic, std::function<void(const boost::system::error_code &ec)> cb)
 			{
 				m_iservice.post([=, &service, &impl]{
-					impl.stream.open(filename, mode);
+					boost::system::error_code ec;
 					
-					if (impl.stream.good()) {
-						service.dispatch([=]{
-							cb({});
-						});
+					impl.filename = filename;
+					impl.atomic = atomic;
+					
+					if (!atomic) {
+						impl.stream.open(filename, mode);
 					} else {
-						service.dispatch([=]{
-							cb(boost::system::error_code(errno, boost::system::get_generic_category()));
-						});
+						impl.temp_filename = util::tmp_path();
+						impl.stream.open(impl.temp_filename, mode);
 					}
+					
+					if (!impl.stream) {
+						ec = boost::system::error_code(errno, boost::system::get_generic_category());
+					}
+					
+					cb(ec);
 				});
 			}
 			
@@ -97,7 +122,8 @@ namespace proxything
 			void async_close(io_service &service, implementation_type &impl, std::function<void(const boost::system::error_code &ec)> cb)
 			{
 				m_iservice.post([=, &service, &impl]{
-					impl.stream.close();
+					boost::system::error_code ec;
+					finalize(impl, ec);
 					
 					service.dispatch(boost::bind(cb, boost::system::error_code()));
 				});
@@ -158,6 +184,38 @@ namespace proxything
 			}
 			
 		protected:
+			/**
+			 * Finalizes a file.
+			 * 
+			 * This will close the file stream, and move the file to its designated location.
+			 */
+			void finalize(implementation_type &impl)
+			{
+				std::lock_guard<std::mutex> lock(impl.mutex);
+				
+				impl.stream.close();
+				
+				if (impl.atomic && !impl.atomic_finished) {
+					fs::rename(impl.temp_filename, impl.filename);
+					impl.atomic_finished = true;
+				}
+			}
+			
+			/**
+			 * Finalizes a file.
+			 * 
+			 * This version will populate ec instead of throwing an exception
+			 * if the operation fails.
+			 */
+			void finalize(implementation_type &impl, boost::system::error_code &ec)
+			{
+				try {
+					finalize(impl);
+				} catch(boost::system::system_error &e) {
+					ec = e.code();
+				}
+			}
+			
 			io_service m_iservice;		///< Internal IO service
 			io_service::work *m_iwork;	///< Keeping the service alive
 			ThreadT m_thread; 			///< Worker thread

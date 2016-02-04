@@ -35,7 +35,7 @@ namespace proxything
 		 */
 		void async_open(const std::string &filename, std::ios_base::openmode mode, fs_service::OpenHandler cb)
 		{
-			get_service().async_open(get_implementation(), filename, mode, cb);
+			get_service().async_open(get_implementation(), filename, mode, false, cb);
 		}
 		
 		/**
@@ -47,6 +47,38 @@ namespace proxything
 		void async_open(const std::string &filename, fs_service::OpenHandler cb)
 		{
 			async_open(filename, std::ios_base::in|std::ios_base::binary, cb);
+		}
+		
+		/**
+		 * Asynchronously opens a file for atomic writes.
+		 * 
+		 * When using atomic writes, an empty file will be opened, which is
+		 * then moved over the destination either by async_close() or by the
+		 * destruction of this object.
+		 * 
+		 * For performance reasons, you cannot atomically open a file for
+		 * reading. This could be supported by simply copying the file
+		 * currently at the destination to the temporary location. This would,
+		 * however, add needless overhead for our use cases.
+		 * 
+		 * @param filename Filename to open
+		 * @param mode     Open mode
+		 * @param cb       Callback
+		 */
+		void async_open_atomic(const std::string &filename, std::ios_base::openmode mode, fs_service::OpenHandler cb)
+		{
+			get_service().async_open(get_implementation(), filename, mode, true, cb);
+		}
+		
+		/**
+		 * Asynchronously opens a file writing, using atomic writes.
+		 * 
+		 * @param filename Filename to open
+		 * @param cb       Callback
+		 */
+		void async_open_atomic(const std::string &filename, fs_service::OpenHandler cb)
+		{
+			async_open_atomic(filename, std::ios_base::out|std::ios_base::trunc, cb);
 		}
 		
 		/**

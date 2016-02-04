@@ -34,6 +34,18 @@ namespace proxything
 		}
 		
 		/**
+		 * Returns a path to a temporary file.
+		 * 
+		 * The file is not created, and is highly unlikely to exist.
+		 */
+		inline std::string tmp_path()
+		{
+			auto tmp_dir = fs::temp_directory_path();
+			auto tmp_name = fs::unique_path("proxything-%%%%-%%%%-%%%%-%%%%");
+			return (tmp_dir / tmp_name).string();
+		}
+		
+		/**
 		 * A "smart pointer" type thing for a temporary file.
 		 */
 		class tmp_file
@@ -42,8 +54,7 @@ namespace proxything
 			/**
 			 * Creates a temporary file.
 			 */
-			tmp_file(std::string content = ""):
-				m_path((fs::temp_directory_path() / fs::unique_path()).string())
+			tmp_file(std::string content = ""): m_path(tmp_path())
 			{
 				std::ofstream stream(m_path);
 				if (!stream) {
