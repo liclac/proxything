@@ -125,7 +125,7 @@ namespace proxything
 					boost::system::error_code ec;
 					finalize(impl, ec);
 					
-					service.dispatch(boost::bind(cb, boost::system::error_code()));
+					service.dispatch(boost::bind(cb, ec));
 				});
 			}
 			
