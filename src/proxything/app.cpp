@@ -1,5 +1,6 @@
 #include <proxything/app.h>
 #include <proxything/proxy_server.h>
+#include <proxything/fs_service.h>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
@@ -101,4 +102,9 @@ void app::init_logging(po::variables_map args)
 	
 	boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
 	BOOST_LOG_TRIVIAL(trace) << "Log filter level set";
+}
+
+void app::init_services(po::variables_map args)
+{
+	add_service<fs_service>(m_service, new fs_service(m_service));
 }

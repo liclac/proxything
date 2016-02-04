@@ -65,6 +65,16 @@ namespace proxything
 		 */
 		void init_logging(po::variables_map args);
 		
+		/**
+		 * Initializes application services.
+		 * 
+		 * Without explicit initialization, services are lazily initialized
+		 * when requested.
+		 * 
+		 * @param args Arguments
+		 */
+		void init_services(po::variables_map args);
+		
 		po::options_description m_options;		///< Option definitions
 		io_service m_service;					///< IO Service
 	};
