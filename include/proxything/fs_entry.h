@@ -4,6 +4,7 @@
 #include <proxything/fs_service.h>
 #include <boost/asio.hpp>
 #include <functional>
+#include <ios>
 
 namespace proxything
 {
@@ -29,11 +30,23 @@ namespace proxything
 		 * Asynchronously opens the file.
 		 * 
 		 * @param filename Filename to open
+		 * @param mode     Open mode
+		 * @param cb       Callback
+		 */
+		void async_open(const std::string &filename, std::ios_base::openmode mode, fs_service::OpenHandler cb)
+		{
+			get_service().async_open(get_implementation(), filename, mode, cb);
+		}
+		
+		/**
+		 * Asynchronously opens the file for reading.
+		 * 
+		 * @param filename Filename to open
 		 * @param cb       Callback
 		 */
 		void async_open(const std::string &filename, fs_service::OpenHandler cb)
 		{
-			get_service().async_open(get_implementation(), filename, cb);
+			async_open(filename, std::ios_base::in|std::ios_base::binary, cb);
 		}
 		
 		/**

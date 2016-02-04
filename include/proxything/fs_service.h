@@ -91,11 +91,12 @@ namespace proxything
 		 * 
 		 * @param impl     Implementation
 		 * @param filename Filename
+		 * @param mode     Open mode
 		 * @param cb       Callback
 		 */
-		void async_open(implementation_type &impl, const std::string &filename, OpenHandler cb)
+		void async_open(implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, OpenHandler cb)
 		{
-			m_impl.async_open(get_io_service(), impl, filename, util::work_bound(get_io_service(), cb));
+			m_impl.async_open(get_io_service(), impl, filename, mode, util::work_bound(get_io_service(), cb));
 		}
 		
 		/**

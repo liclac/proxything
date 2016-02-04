@@ -74,10 +74,10 @@ namespace proxything
 			/**
 			 * Implementation for fs_service::async_open().
 			 */
-			void async_open(io_service &service, implementation_type &impl, const std::string &filename, std::function<void(const boost::system::error_code &ec)> cb)
+			void async_open(io_service &service, implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, std::function<void(const boost::system::error_code &ec)> cb)
 			{
 				m_iservice.post([=, &service, &impl]{
-					impl.stream.open(filename);
+					impl.stream.open(filename, mode);
 					
 					if (impl.stream.good()) {
 						service.dispatch([=]{
