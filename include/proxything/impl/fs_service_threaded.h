@@ -19,7 +19,8 @@ namespace proxything
 		 * Threaded implementation of fs_service.
 		 * 
 		 * This uses a worker thread an an io_service to queue up synchronous
-		 * IO operations to be performed asynchronously.
+		 * IO operations to be performed asynchronously. It uses strands to
+		 * ensure that reads and writes are performed sequentially.
 		 * 
 		 * @tparam ThreadT Thread type to use (std::thread or boost::thread)
 		 */
@@ -40,6 +41,9 @@ namespace proxything
 				
 				std::string temp_filename;	///< Temporary filename (atomic)
 				std::mutex final_mutex;		///< Finalization mutex
+				
+				/// Strand to ensure sequential access
+				std::unique_ptr<io_service::strand> strand;
 			};
 			
 			/**
@@ -70,7 +74,7 @@ namespace proxything
 			 */
 			void construct(io_service &service, implementation_type &impl)
 			{
-				
+				impl.strand = std::unique_ptr<io_service::strand>(new io_service::strand(m_iservice));
 			}
 			
 			/**
@@ -86,7 +90,7 @@ namespace proxything
 			 */
 			void async_open(io_service &service, implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, bool atomic, std::function<void(const boost::system::error_code &ec)> cb)
 			{
-				m_iservice.post([=, &service, &impl]{
+				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
 					
 					impl.filename = filename;
@@ -110,7 +114,7 @@ namespace proxything
 			 */
 			void async_close(io_service &service, implementation_type &impl, std::function<void(const boost::system::error_code &ec)> cb)
 			{
-				m_iservice.post([=, &service, &impl]{
+				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
 					finalize(impl, ec);
 					
@@ -124,7 +128,7 @@ namespace proxything
 			template<typename BufsT>
 			void async_read_some(io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
 			{
-				m_iservice.post([=, &service, &impl]{
+				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
 					std::size_t size = 0;
 					
@@ -154,7 +158,7 @@ namespace proxything
 			template<typename BufsT>
 			void async_write_some(io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
 			{
-				m_iservice.post([=, &service, &impl]{
+				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
 					std::size_t size = 0;
 					
