@@ -82,7 +82,7 @@ namespace proxything
 			 */
 			void destroy(io_service &service, implementation_type &impl)
 			{
-				finalize(impl);
+				impl.stream.close();
 			}
 			
 			/**
@@ -116,7 +116,12 @@ namespace proxything
 			{
 				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
-					finalize(impl, ec);
+					
+					impl.stream.close();
+					
+					if (impl.atomic) {
+						fs::rename(impl.temp_filename, impl.filename, ec);
+					}
 					
 					service.dispatch(boost::bind(cb, ec));
 				});
@@ -185,39 +190,6 @@ namespace proxything
 			}
 			
 		protected:
-			/**
-			 * Finalizes a file.
-			 * 
-			 * This will close the file stream, and for atomic writes, move the
-			 * file to its designated location.
-			 */
-			void finalize(implementation_type &impl)
-			{
-				std::lock_guard<std::mutex> lock(impl.final_mutex);
-				
-				impl.stream.close();
-				
-				if (impl.atomic && !impl.atomic_done) {
-					fs::rename(impl.temp_filename, impl.filename);
-					impl.atomic_done = true;
-				}
-			}
-			
-			/**
-			 * Finalizes a file.
-			 * 
-			 * This version will populate ec instead of throwing an exception
-			 * if the operation fails.
-			 */
-			void finalize(implementation_type &impl, boost::system::error_code &ec)
-			{
-				try {
-					finalize(impl);
-				} catch(boost::system::system_error &e) {
-					ec = e.code();
-				}
-			}
-			
 			io_service m_iservice;		///< Internal IO service
 			io_service::work *m_iwork;	///< Keeping the service alive
 			ThreadT m_thread; 			///< Worker thread
