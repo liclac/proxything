@@ -32,23 +32,14 @@ namespace proxything
 			 */
 			struct implementation_type
 			{
-				/// File stream connected to the underlying file
-				std::fstream stream;
+				std::fstream stream;		///< Underlying file stream
+				std::string filename;		///< Filename
 				
-				/// Filename
-				std::string filename;
+				bool atomic = false;		///< Are we using atomic writes?
+				bool atomic_done = false;	///< Is the atomic write done?
 				
-				/// Is the file opened for atomic writes?
-				bool atomic = false;
-				
-				/// Is the atomic operation finished?
-				bool atomic_finished = false;
-				
-				/// Temporary filename for atomic writes
-				std::string temp_filename;
-				
-				/// Mutex used for finalization
-				std::mutex mutex;
+				std::string temp_filename;	///< Temporary filename (atomic)
+				std::mutex final_mutex;		///< Finalization mutex
 			};
 			
 			/**
@@ -101,13 +92,11 @@ namespace proxything
 					impl.filename = filename;
 					impl.atomic = atomic;
 					
-					if (!atomic) {
-						impl.stream.open(filename, mode);
-					} else {
+					if (impl.atomic) {
 						impl.temp_filename = util::tmp_path();
-						impl.stream.open(impl.temp_filename, mode);
 					}
 					
+					impl.stream.open(!impl.atomic ? impl.filename : impl.temp_filename, mode);
 					if (!impl.stream) {
 						ec = boost::system::error_code(errno, boost::system::get_generic_category());
 					}
@@ -187,17 +176,18 @@ namespace proxything
 			/**
 			 * Finalizes a file.
 			 * 
-			 * This will close the file stream, and move the file to its designated location.
+			 * This will close the file stream, and for atomic writes, move the
+			 * file to its designated location.
 			 */
 			void finalize(implementation_type &impl)
 			{
-				std::lock_guard<std::mutex> lock(impl.mutex);
+				std::lock_guard<std::mutex> lock(impl.final_mutex);
 				
 				impl.stream.close();
 				
-				if (impl.atomic && !impl.atomic_finished) {
+				if (impl.atomic && !impl.atomic_done) {
 					fs::rename(impl.temp_filename, impl.filename);
-					impl.atomic_finished = true;
+					impl.atomic_done = true;
 				}
 			}
 			
