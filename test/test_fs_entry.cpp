@@ -147,5 +147,11 @@ SCENARIO("files can be opened")
 				CHECK(exists_3);
 			}
 		}
+		
+		try {
+			fs::remove(path);
+		} catch(fs::filesystem_error &e) {
+			// Do nothing
+		}
 	}
 }
