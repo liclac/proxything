@@ -64,6 +64,14 @@ namespace proxything
 		typedef std::function<void(const boost::system::error_code &ec, std::size_t size)> ReadHandler;
 		
 		/**
+		 * Callback type for writing to a file.
+		 * 
+		 * @param ec   Error code
+		 * @param size Bytes written
+		 */
+		typedef std::function<void(const boost::system::error_code &ec, std::size_t size)> WriteHandler;
+		
+		/**
 		 * Constructor.
 		 * 
 		 * @param  service Parent IO service
@@ -128,6 +136,19 @@ namespace proxything
 		void async_read_some(implementation_type &impl, const BufsT &buffers, fs_service::ReadHandler cb)
 		{
 			m_impl.async_read_some(get_io_service(), impl, buffers, util::work_bound(get_io_service(), cb));
+		}
+		
+		/**
+		 * Asynchronously writes a file.
+		 * 
+		 * @param impl    Implementation
+		 * @param buffers Buffers
+		 * @param cb      Callback
+		 */
+		template<typename BufsT>
+		void async_write_some(implementation_type &impl, const BufsT &buffers, WriteHandler cb)
+		{
+			m_impl.async_write_some(get_io_service(), impl, buffers, util::work_bound(get_io_service(), cb));
 		}
 		
 	protected:

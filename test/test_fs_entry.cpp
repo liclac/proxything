@@ -61,5 +61,42 @@ SCENARIO("files can be opened")
 				REQUIRE(content == "Lorem ipsum dolor sit amet");
 			}
 		}
+		
+		WHEN("it's written to")
+		{
+			fs_entry entry(service);
+			boost::system::error_code open_ec, write_ec;
+			std::size_t write_size;
+			
+			std::string buf_str("This is a test string.");
+			std::vector<char> buf(buf_str.begin(), buf_str.end());
+			
+			entry.async_open(file.path(), std::ios_base::out, [&](const boost::system::error_code &ec) {
+				open_ec = ec;
+				if (ec) { return; }
+				
+				async_write(entry, buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
+					write_ec = ec;
+					write_size = size;
+					
+					entry.async_close();
+				});
+			});
+			service.run();
+			
+			THEN("it shouldn't error")
+			{
+				REQUIRE_FALSE(open_ec);
+				REQUIRE_FALSE(write_ec);
+			}
+			
+			THEN("it should prepend the data properly")
+			{
+				REQUIRE(write_size == 22);
+				std::ifstream f(file.path());
+				std::string content((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+				REQUIRE(content == "This is a test string.");
+			}
+		}
 	}
 }

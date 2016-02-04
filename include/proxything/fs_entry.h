@@ -71,6 +71,19 @@ namespace proxything
 		{
 			get_service().async_read_some(get_implementation(), buffers, cb);
 		}
+		
+		/**
+		 * Asynchronously writes some data.
+		 * 
+		 * @tparam BufsT   Constant buffer sequence type
+		 * @param  buffers Buffers to read from
+		 * @param  cb      Callback
+		 */
+		template<typename BufsT>
+		void async_write_some(const BufsT &buffers, fs_service::WriteHandler cb)
+		{
+			get_service().async_write_some(get_implementation(), buffers, cb);
+		}
 	};
 }
 
