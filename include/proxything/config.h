@@ -7,4 +7,7 @@
 // Maximum size of the receive buffer used to read from remote servers
 #define PROXYTHING_REMOTE_BUFFER_SIZE 2048
 
+// Maximum size of the buffer used to serve local files
+#define PROXYTHING_FILE_BUFFER_SIZE 1024
+
 #endif

@@ -4,6 +4,7 @@ set(proxything_SOURCES
 	proxy_server.cpp
 	client_connection.cpp
 	remote_connection.cpp
+	file_responder.cpp
 	fs_service.cpp
 )
 add_library(proxythinglib ${proxything_SOURCES})

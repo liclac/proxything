@@ -52,6 +52,13 @@ namespace proxything
 		 */
 		void connect_remote(ip::tcp::endpoint endpoint, std::shared_ptr<fs_entry> cache_file);
 		
+		/**
+		 * Serves the specified local file.
+		 * @param file File to serve
+		 * @see proxything::file_responder
+		 */
+		void serve_file(std::shared_ptr<fs_entry> file);
+		
 		
 		
 		/// Returns the IO service

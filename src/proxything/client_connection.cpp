@@ -1,5 +1,6 @@
 #include <proxything/client_connection.h>
 #include <proxything/remote_connection.h>
+#include <proxything/file_responder.h>
 #include <proxything/proxy_server.h>
 #include <proxything/config.h>
 #include <boost/log/trivial.hpp>
@@ -83,6 +84,13 @@ void client_connection::connect_remote(ip::tcp::endpoint endpoint, std::shared_p
 	});
 }
 
+void client_connection::serve_file(std::shared_ptr<fs_entry> file)
+{
+	BOOST_LOG_TRIVIAL(info) << "Serving local response";
+	auto responder = std::make_shared<file_responder>(m_service, shared_from_this(), file);
+	responder->start();
+}
+
 void client_connection::read_command()
 {
 	// Retain the connection to keep it from getting deleted mid-transaction
@@ -119,7 +127,7 @@ void client_connection::read_command()
 				}
 				
 				if (hit) {
-					// TODO: Serve the file
+					serve_file(f);
 				} else {
 					connect_remote(endpoint, f);
 				}
