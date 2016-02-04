@@ -10,7 +10,8 @@ using namespace proxything;
 using namespace boost::asio;
 
 client_connection::client_connection(io_service &service, std::shared_ptr<proxy_server> server):
-	m_service(service), m_socket(m_service), m_server(server),
+	m_service(service), m_socket(m_service),
+	m_server(server), m_cache(m_service),
 	m_buf(PROXYTHING_CLIENT_BUFFER_SIZE)
 {
 	BOOST_LOG_TRIVIAL(trace) << "Client Connection created";
@@ -72,11 +73,12 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 	return ip::tcp::endpoint(address, port);
 }
 
-void client_connection::connect_remote(ip::tcp::endpoint endpoint)
+void client_connection::connect_remote(ip::tcp::endpoint endpoint, std::shared_ptr<fs_entry> cache_file)
 {
 	BOOST_LOG_TRIVIAL(info) << "Connecting to remote: " << endpoint.address().to_string() << ":" << endpoint.port();
-	auto remote = std::make_shared<remote_connection>(m_service, shared_from_this());
-	remote->socket().async_connect(endpoint, [&, remote](const boost::system::error_code &ec) {
+	BOOST_LOG_TRIVIAL(debug) << "Caching to: " << cache_file->filename();
+	auto remote = std::make_shared<remote_connection>(m_service, shared_from_this(), cache_file);
+	remote->socket().async_connect(endpoint, [=](const boost::system::error_code &ec) {
 		remote->connected();
 	});
 }
@@ -109,7 +111,19 @@ void client_connection::read_command()
 		ip::tcp::endpoint endpoint;
 		try {
 			endpoint = parse(cmd);
-			connect_remote(endpoint);
+			m_cache.async_lookup(endpoint, [=](bool hit, const boost::system::error_code &ec, std::shared_ptr<fs_entry> f) {
+				if (ec) {
+					// Log the error, but try to proceed anyways; at worst, it'll cause performance
+					// degradation, which is better than ceasing to function
+					BOOST_LOG_TRIVIAL(error) << "Cache error: " << ec;
+				}
+				
+				if (hit) {
+					// TODO: Serve the file
+				} else {
+					connect_remote(endpoint, f);
+				}
+			});
 		} catch (std::invalid_argument &e) {
 			BOOST_LOG_TRIVIAL(error) << "Invalid command: " << e.what();
 			

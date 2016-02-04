@@ -9,6 +9,7 @@ namespace proxything
 	using namespace boost::asio;
 	
 	class client_connection;
+	class fs_entry;
 	
 	/**
 	 * A remote connection on a client's behalf.
@@ -19,7 +20,7 @@ namespace proxything
 		/**
 		 * Constructs a remote connection.
 		 */
-		remote_connection(io_service &service, std::shared_ptr<client_connection> client);
+		remote_connection(io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> cache_file);
 		
 		virtual ~remote_connection();
 		
@@ -41,6 +42,9 @@ namespace proxything
 		/// Returns the parent client
 		inline std::shared_ptr<client_connection> client() { return m_client; }
 		
+		/// Returns the cache file handle
+		inline std::shared_ptr<fs_entry> cache_file() { return m_cache_file; }
+		
 	protected:
 		/**
 		 * Reads and delivers a chunk of data.
@@ -55,6 +59,7 @@ namespace proxything
 		ip::tcp::socket m_socket;						///< Socket
 		
 		std::shared_ptr<client_connection> m_client;	///< Parent connection
+		std::shared_ptr<fs_entry> m_cache_file;			///< Cache file handle
 		
 		streambuf m_buf;								///< Buffer
 	};

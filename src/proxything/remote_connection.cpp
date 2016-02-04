@@ -1,14 +1,15 @@
 #include <proxything/remote_connection.h>
 #include <proxything/client_connection.h>
+#include <proxything/fs_entry.h>
 #include <proxything/config.h>
 #include <boost/log/trivial.hpp>
 
 using namespace proxything;
 using namespace boost::asio;
 
-remote_connection::remote_connection(io_service &service, std::shared_ptr<client_connection> client):
+remote_connection::remote_connection(io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> cache_file):
 	m_service(service), m_socket(m_service), m_client(client),
-	m_buf(PROXYTHING_REMOTE_BUFFER_SIZE)
+	m_cache_file(cache_file), m_buf(PROXYTHING_REMOTE_BUFFER_SIZE)
 {
 	BOOST_LOG_TRIVIAL(trace) << "Remote Connection created";
 }
@@ -44,6 +45,17 @@ void remote_connection::read_and_deliver()
 		BOOST_LOG_TRIVIAL(trace) << "Buffer size: " << m_buf.size();
 		
 		if (size) {
+			auto cache_buf = std::make_shared<streambuf>(size);
+			buffer_copy(cache_buf->prepare(size), m_buf.data(), size);
+			cache_buf->commit(size);
+			async_write(*m_cache_file, *cache_buf, [this, cache_buf](const boost::system::error_code &ec, std::size_t size) {
+				if (ec) {
+					BOOST_LOG_TRIVIAL(warning) << "Couldn't write to " << m_cache_file->filename() << ": " << ec;
+				} else {
+					BOOST_LOG_TRIVIAL(trace) << "Cached " << size << " bytes";
+				}
+			});
+			
 			async_write(m_client->socket(), m_buf, [this, self](const boost::system::error_code &ec, std::size_t size) {
 				if (ec) {
 					if (ec == error::eof) {

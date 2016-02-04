@@ -1,6 +1,7 @@
 #ifndef PROXYTHING_CLIENT_CONNECTION_H
 #define PROXYTHING_CLIENT_CONNECTION_H
 
+#include <proxything/cache_manager.h>
 #include <boost/asio.hpp>
 #include <string>
 #include <memory>
@@ -45,10 +46,11 @@ namespace proxything
 		/**
 		 * Fetches remote data from the specified host.
 		 * 
-		 * @param endpoint Endpoint to connect to
+		 * @param endpoint   Endpoint to connect to
+		 * @param cache_file Cache file to write to
 		 * @see proxything::remote_connection
 		 */
-		void connect_remote(ip::tcp::endpoint endpoint);
+		void connect_remote(ip::tcp::endpoint endpoint, std::shared_ptr<fs_entry> cache_file);
 		
 		
 		
@@ -73,6 +75,7 @@ namespace proxything
 		ip::tcp::socket m_socket;				///< Socket
 		
 		std::shared_ptr<proxy_server> m_server;	///< Parent server
+		cache_manager m_cache;					///< Cache manager
 		
 		streambuf m_buf;						///< Buffer for client commands
 	};
