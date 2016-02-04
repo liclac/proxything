@@ -66,7 +66,7 @@ namespace proxything
 		 */
 		void async_lookup(const ip::tcp::endpoint &endpoint, LookupHandler cb)
 		{
-			std::string filename = m_path.append(filename_for(endpoint)).string();
+			std::string filename = (m_path / filename_for(endpoint)).string();
 			
 			auto f = std::make_shared<fs_entry>(m_service);
 			f->async_open(filename, [=](const boost::system::error_code &ec) {
