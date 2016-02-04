@@ -172,6 +172,14 @@ namespace proxything
 				});
 			}
 			
+			/**
+			 * Implementation for fs_service::filename().
+			 */
+			std::string filename(const implementation_type &impl) const
+			{
+				return impl.filename;
+			}
+			
 		protected:
 			/**
 			 * Finalizes a file.

@@ -116,6 +116,14 @@ namespace proxything
 		{
 			get_service().async_write_some(get_implementation(), buffers, cb);
 		}
+		
+		/**
+		 * Returns the entry's filename.
+		 */
+		std::string filename() const
+		{
+			return get_service().filename(get_implementation());
+		}
 	};
 }
 

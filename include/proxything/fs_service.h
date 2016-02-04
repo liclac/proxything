@@ -152,6 +152,16 @@ namespace proxything
 			m_impl.async_write_some(get_io_service(), impl, buffers, util::work_bound(get_io_service(), cb));
 		}
 		
+		/**
+		 * Returns the entry's filename.
+		 * 
+		 * @param  impl Implementation
+		 */
+		std::string filename(const implementation_type &impl) const
+		{
+			return m_impl.filename(impl);
+		}
+		
 	protected:
 		/**
 		 * Free all user handlers.

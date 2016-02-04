@@ -27,6 +27,11 @@ SCENARIO("files can be opened")
 			{
 				REQUIRE_FALSE(ec);
 			}
+			
+			THEN("it should know its filename")
+			{
+				REQUIRE(entry.filename() == file.path());
+			}
 		}
 		
 		WHEN("it's read from")
