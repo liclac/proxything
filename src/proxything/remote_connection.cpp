@@ -17,6 +17,18 @@ remote_connection::remote_connection(io_service &service, std::shared_ptr<client
 remote_connection::~remote_connection()
 {
 	BOOST_LOG_TRIVIAL(trace) << "Remote Connection destroyed";
+	
+	// Pass a surrogate pointer to m_cache_file to the lambda to keep the file
+	// in existence as it's being closed; shared_from_this() would work too,
+	// but would keep the entire connection object in memory for no good reason
+	auto cache_file_ptr = m_cache_file;
+	m_cache_file->async_close([cache_file_ptr](const boost::system::error_code &ec) {
+		if (ec) {
+			BOOST_LOG_TRIVIAL(warning) << "Failed to commit cache: " << ec;
+		} else {
+			BOOST_LOG_TRIVIAL(trace) << "Cache committed";
+		}
+	});
 }
 
 void remote_connection::connected()
