@@ -79,7 +79,7 @@ int app::run(po::variables_map args)
 	
 	BOOST_LOG_TRIVIAL(trace) << "Starting...";
 	
-	init_threads();
+	init_threads(args);
 	m_service.run();
 	
 	BOOST_LOG_TRIVIAL(trace) << "Stopped!";
