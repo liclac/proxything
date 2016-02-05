@@ -13,7 +13,7 @@ namespace po = boost::program_options;
  */
 struct args_helper
 {
-	args_helper(const std::vector<std::string> &args)
+	args_helper(const std::vector<std::string> &args = {})
 	{
 		argc = args.size() + 1;
 		argv = new char*[argc];
@@ -41,7 +41,7 @@ SCENARIO("argument parsing works")
 	
 	GIVEN("no arguments")
 	{
-		args_helper helper({});
+		args_helper helper;
 		
 		THEN("argc + argv should be correct")
 		{
