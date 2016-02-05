@@ -42,26 +42,6 @@ int app::run(int argc, char **argv)
 	return run(args);
 }
 
-
-
-po::variables_map app::parse_args(int argc, char **argv)
-{
-	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, m_options), vm);
-	po::notify(vm);
-	
-	return vm;
-}
-
-void app::print_help()
-{
-	BOOST_LOG_TRIVIAL(trace) << "Printing help...";
-	std::cerr << "Usage: proxything [options]" << std::endl;
-	std::cerr << std::endl;
-	std::cerr << "Available options:" << std::endl;
-	std::cerr << m_options;
-}
-
 int app::run(po::variables_map args)
 {
 	init_logging(args);
@@ -85,6 +65,26 @@ int app::run(po::variables_map args)
 	BOOST_LOG_TRIVIAL(trace) << "Stopped!";
 	
 	return 0;
+}
+
+
+
+po::variables_map app::parse_args(int argc, char **argv)
+{
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, m_options), vm);
+	po::notify(vm);
+	
+	return vm;
+}
+
+void app::print_help()
+{
+	BOOST_LOG_TRIVIAL(trace) << "Printing help...";
+	std::cerr << "Usage: proxything [options]" << std::endl;
+	std::cerr << std::endl;
+	std::cerr << "Available options:" << std::endl;
+	std::cerr << m_options;
 }
 
 void app::init_logging(po::variables_map args)

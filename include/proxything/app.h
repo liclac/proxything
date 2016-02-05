@@ -38,7 +38,13 @@ namespace proxything
 		 */
 		int run(int argc, char **argv);
 		
-		
+		/**
+		 * Main entry point.
+		 * 
+		 * @param  args Commandline arguments
+		 * @return      Exit code
+		 */
+		int run(po::variables_map args);
 		
 		/**
 		 * Parses commandline arguments.
@@ -54,15 +60,6 @@ namespace proxything
 		 */
 		void print_help();
 		
-		/**
-		 * Main entry point.
-		 * 
-		 * @param  args Commandline arguments
-		 * @return      Exit code
-		 */
-		int run(po::variables_map args);
-		
-	protected:
 		/**
 		 * Initializes application logging.
 		 * 
@@ -94,6 +91,21 @@ namespace proxything
 		 */
 		void init_threads(po::variables_map args);
 		
+		
+		
+		/// Returns the option definitions
+		inline po::options_description& options() { return m_options; }
+		
+		/// Returns the IO Service
+		inline io_service& service() { return m_service; }
+		
+		/// Returns all running background threads
+		inline std::vector<std::thread>& threads() { return m_threads; }
+		
+		/// Returns the proxy server
+		inline std::shared_ptr<proxy_server> server() { return m_server; }
+		
+	protected:
 		po::options_description m_options;		///< Option definitions
 		io_service m_service;					///< IO Service
 		std::vector<std::thread> m_threads;		///< Threads
