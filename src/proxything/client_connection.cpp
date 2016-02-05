@@ -2,6 +2,7 @@
 #include <proxything/remote_connection.h>
 #include <proxything/file_responder.h>
 #include <proxything/proxy_server.h>
+#include <proxything/fs_entry.h>
 #include <proxything/config.h>
 #include <boost/log/trivial.hpp>
 #include <sstream>

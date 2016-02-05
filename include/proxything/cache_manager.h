@@ -1,16 +1,17 @@
 #ifndef PROXYTHING_CACHE_MANAGER_H
 #define PROXYTHING_CACHE_MANAGER_H
 
-#include <proxything/fs_entry.h>
 #include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
-#include <sstream>
+#include <memory>
+#include <string>
 
 namespace proxything
 {
 	using namespace boost::asio;
 	namespace fs = boost::filesystem;
+	
+	class fs_entry;
 	
 	/**
 	 * Cache manager.
@@ -26,28 +27,16 @@ namespace proxything
 		/**
 		 * Constructs a cache manager.
 		 */
-		cache_manager(io_service &service):
-			m_service(service), m_path(fs::temp_directory_path()) { }
+		cache_manager(io_service &service);
 		
-		virtual ~cache_manager() { }
+		virtual ~cache_manager();
 		
 		/**
 		 * Returns a cache filename for the given endpoint.
 		 * 
 		 * @param  endpoint Endpoint
 		 */
-		std::string filename_for(const ip::tcp::endpoint &endpoint)
-		{
-			std::string address_str = endpoint.address().to_string();
-			boost::replace_all(address_str, ".", "-");
-			boost::replace_all(address_str, ":", "-");
-			
-			std::stringstream ss;
-			ss << "proxything_cache_" << address_str << "_" << endpoint.port();
-			std::string filename = ss.str();
-			
-			return filename;
-		}
+		std::string filename_for(const ip::tcp::endpoint &endpoint);
 		
 		/**
 		 * Look up a file in the cache.
@@ -61,21 +50,7 @@ namespace proxything
 		 * @param endpoint Endpoint to open the cache for
 		 * @param cb       Callback
 		 */
-		void async_lookup(const ip::tcp::endpoint &endpoint, LookupHandler cb)
-		{
-			std::string filename = (m_path / filename_for(endpoint)).string();
-			
-			auto f = std::make_shared<fs_entry>(m_service);
-			f->async_open(filename, [=](const boost::system::error_code &ec) {
-				if (!ec) {
-					cb(true, ec, f);
-				} else {
-					f->async_open_atomic(filename, [=](const boost::system::error_code &ec) {
-						cb(false, ec, f);
-					});
-				}
-			});
-		}
+		void async_lookup(const ip::tcp::endpoint &endpoint, LookupHandler cb);
 		
 		/// Returns the path to the cache files.
 		const fs::path& path() const { return m_path; }
