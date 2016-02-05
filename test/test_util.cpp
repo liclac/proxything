@@ -74,6 +74,20 @@ SCENARIO("work-bound handlers work")
 	}
 }
 
+SCENARIO("temporary paths can be generated")
+{
+	WHEN("two paths are generated")
+	{
+		std::string a = util::tmp_path();
+		std::string b = util::tmp_path();
+		
+		THEN("they should be different")
+		{
+			REQUIRE(a != b);
+		}
+	}
+}
+
 SCENARIO("temporary files work")
 {
 	WHEN("a temporary file is created")
