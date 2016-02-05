@@ -48,7 +48,7 @@ namespace proxything
 		
 	protected:
 		
-		asio::io_service &m_service;				///< IO Service
+		asio::io_service &m_service;			///< IO Service
 		asio::ip::tcp::acceptor m_acceptor;		///< Acceptor for new connections
 	};
 }

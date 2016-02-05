@@ -78,11 +78,11 @@ namespace proxything
 		 */
 		void read_command();
 		
-		asio::io_service &m_service;					///< IO Service
+		asio::io_service &m_service;				///< IO Service
 		asio::ip::tcp::socket m_socket;				///< Socket
 		
-		std::shared_ptr<proxy_server> m_server;	///< Parent server
-		cache_manager m_cache;					///< Cache manager
+		std::shared_ptr<proxy_server> m_server;		///< Parent server
+		cache_manager m_cache;						///< Cache manager
 		
 		asio::streambuf m_buf;						///< Buffer for client commands
 	};

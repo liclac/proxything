@@ -55,13 +55,13 @@ namespace proxything
 		
 		
 		
-		asio::io_service &m_service;							///< IO Service
-		asio::ip::tcp::socket m_socket;						///< Socket
+		asio::io_service &m_service;					///< IO Service
+		asio::ip::tcp::socket m_socket;					///< Socket
 		
 		std::shared_ptr<client_connection> m_client;	///< Parent connection
 		std::shared_ptr<fs_entry> m_cache_file;			///< Cache file handle
 		
-		asio::streambuf m_buf;								///< Buffer
+		asio::streambuf m_buf;							///< Buffer
 	};
 }
 

@@ -58,7 +58,7 @@ namespace proxything
 	protected:
 		asio::io_service &m_service;	///< IO Service
 		
-		fs::path m_path;		///< Path for cache files
+		fs::path m_path;				///< Path for cache files
 	};
 }
 
