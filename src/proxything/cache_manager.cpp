@@ -5,12 +5,12 @@
 
 using namespace proxything;
 
-cache_manager::cache_manager(io_service &service):
+cache_manager::cache_manager(asio::io_service &service):
 	m_service(service), m_path(fs::temp_directory_path()) { }
 
 cache_manager::~cache_manager() { }
 
-std::string cache_manager::filename_for(const ip::tcp::endpoint &endpoint)
+std::string cache_manager::filename_for(const asio::ip::tcp::endpoint &endpoint)
 {
 	std::string address_str = endpoint.address().to_string();
 	boost::replace_all(address_str, ".", "-");
@@ -23,7 +23,7 @@ std::string cache_manager::filename_for(const ip::tcp::endpoint &endpoint)
 	return filename;
 }
 
-void cache_manager::async_lookup(const ip::tcp::endpoint &endpoint, LookupHandler cb)
+void cache_manager::async_lookup(const asio::ip::tcp::endpoint &endpoint, LookupHandler cb)
 {
 	std::string filename = (m_path / filename_for(endpoint)).string();
 	

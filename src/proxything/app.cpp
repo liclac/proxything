@@ -110,7 +110,7 @@ void app::init_logging(po::variables_map args)
 
 void app::init_services(po::variables_map args)
 {
-	add_service<fs_service>(m_service, new fs_service(m_service));
+	asio::add_service<fs_service>(m_service, new fs_service(m_service));
 }
 
 void app::init_server(po::variables_map args)

@@ -8,7 +8,7 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	
 	class proxy_server;
 	
@@ -21,7 +21,7 @@ namespace proxything
 		/**
 		 * Constructs a client connection.
 		 */
-		client_connection(io_service &service, std::shared_ptr<proxy_server> server);
+		client_connection(asio::io_service &service, std::shared_ptr<proxy_server> server);
 		
 		virtual ~client_connection();
 		
@@ -41,7 +41,7 @@ namespace proxything
 		 * 
 		 * @throws std::invalid_argument Invalid command
 		 */
-		ip::tcp::endpoint parse(const std::string &cmd) const;
+		asio::ip::tcp::endpoint parse(const std::string &cmd) const;
 		
 		/**
 		 * Fetches remote data from the specified host.
@@ -50,7 +50,7 @@ namespace proxything
 		 * @param cache_file Cache file to write to
 		 * @see proxything::remote_connection
 		 */
-		void connect_remote(ip::tcp::endpoint endpoint, std::shared_ptr<fs_entry> cache_file);
+		void connect_remote(asio::ip::tcp::endpoint endpoint, std::shared_ptr<fs_entry> cache_file);
 		
 		/**
 		 * Serves the specified local file.
@@ -62,10 +62,10 @@ namespace proxything
 		
 		
 		/// Returns the IO service
-		inline io_service& service() { return m_service; }
+		inline asio::io_service& service() { return m_service; }
 		
 		/// Returns the underlying socket
-		inline ip::tcp::socket& socket() { return m_socket; }
+		inline asio::ip::tcp::socket& socket() { return m_socket; }
 		
 		/// Returns the parent server
 		inline std::shared_ptr<proxy_server> server() { return m_server; }
@@ -78,13 +78,13 @@ namespace proxything
 		 */
 		void read_command();
 		
-		io_service &m_service;					///< IO Service
-		ip::tcp::socket m_socket;				///< Socket
+		asio::io_service &m_service;					///< IO Service
+		asio::ip::tcp::socket m_socket;				///< Socket
 		
 		std::shared_ptr<proxy_server> m_server;	///< Parent server
 		cache_manager m_cache;					///< Cache manager
 		
-		streambuf m_buf;						///< Buffer for client commands
+		asio::streambuf m_buf;						///< Buffer for client commands
 	};
 }
 

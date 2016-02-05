@@ -4,18 +4,17 @@
 #include <memory>
 
 using namespace proxything;
-using namespace boost::asio;
 
-proxy_server::proxy_server(io_service &service):
+proxy_server::proxy_server(asio::io_service &service):
 	m_service(service), m_acceptor(m_service) { }
 
 proxy_server::~proxy_server() { }
 
 void proxy_server::listen(const std::string &host, unsigned short port)
 {
-	ip::tcp::endpoint endpoint(ip::address::from_string(host), port);
+	asio::ip::tcp::endpoint endpoint(asio::ip::address::from_string(host), port);
 	m_acceptor.open(endpoint.protocol());
-	m_acceptor.set_option(ip::tcp::acceptor::reuse_address(true));
+	m_acceptor.set_option(asio::ip::tcp::acceptor::reuse_address(true));
 	m_acceptor.bind(endpoint);
 	m_acceptor.listen();
 	

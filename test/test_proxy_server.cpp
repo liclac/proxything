@@ -5,7 +5,7 @@ using namespace proxything;
 
 SCENARIO("listening works")
 {
-	io_service service;
+	asio::io_service service;
 	proxy_server server(service);
 	
 	GIVEN("a local host and port")

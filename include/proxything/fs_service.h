@@ -9,7 +9,7 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	
 	/**
 	 * Service for asynchronous filesystem access.
@@ -17,7 +17,7 @@ namespace proxything
 	 * This is a very barebones implementation, but it has the basic design
 	 * down and is sufficient for our purposes.
 	 */
-	class fs_service : public io_service::service
+	class fs_service : public asio::io_service::service
 	{
 		/**
 		 * The concrete implementation used.
@@ -33,7 +33,7 @@ namespace proxything
 		
 	public:
 		/// Service ID
-		static boost::asio::io_service::id id;
+		static asio::io_service::id id;
 		
 		/**
 		 * Implementation-defined type for IO objects.
@@ -76,8 +76,8 @@ namespace proxything
 		 * 
 		 * @param  service Parent IO service
 		 */
-		explicit fs_service(io_service &service):
-			io_service::service(service) { }
+		explicit fs_service(asio::io_service &service):
+			asio::io_service::service(service) { }
 		
 		virtual ~fs_service() { };
 		

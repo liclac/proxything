@@ -9,9 +9,8 @@
 #include <iostream>
 
 using namespace proxything;
-using namespace boost::asio;
 
-client_connection::client_connection(io_service &service, std::shared_ptr<proxy_server> server):
+client_connection::client_connection(asio::io_service &service, std::shared_ptr<proxy_server> server):
 	m_service(service), m_socket(m_service),
 	m_server(server), m_cache(m_service),
 	m_buf(PROXYTHING_CLIENT_BUFFER_SIZE)
@@ -30,7 +29,7 @@ void client_connection::connected()
 	read_command();
 }
 
-ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
+asio::ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 {
 	// Find the : delimiting the address and port
 	int colon_at = cmd.rfind(':');
@@ -50,9 +49,9 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 	}
 	
 	// Parse the address
-	ip::address address;
+	asio::ip::address address;
 	try {
-		address = ip::address::from_string(address_s);
+		address = asio::ip::address::from_string(address_s);
 	} catch (boost::system::system_error &e) {
 		throw std::invalid_argument("Given address is not valid");
 	}
@@ -72,10 +71,10 @@ ip::tcp::endpoint client_connection::parse(const std::string &cmd) const
 		throw std::invalid_argument("Valid ports are 1-65535");
 	}
 	
-	return ip::tcp::endpoint(address, port);
+	return asio::ip::tcp::endpoint(address, port);
 }
 
-void client_connection::connect_remote(ip::tcp::endpoint endpoint, std::shared_ptr<fs_entry> cache_file)
+void client_connection::connect_remote(asio::ip::tcp::endpoint endpoint, std::shared_ptr<fs_entry> cache_file)
 {
 	BOOST_LOG_TRIVIAL(info) << "Connecting to remote: " << endpoint.address().to_string() << ":" << endpoint.port();
 	BOOST_LOG_TRIVIAL(debug) << "Caching to: " << cache_file->filename();
@@ -100,7 +99,7 @@ void client_connection::read_command()
 	BOOST_LOG_TRIVIAL(trace) << "Awaiting command...";
 	async_read_until(m_socket, m_buf, "\r\n", [&, self](const boost::system::error_code &ec, std::size_t size) {
 		if (ec) {
-			if (ec == error::eof) {
+			if (ec == asio::error::eof) {
 				BOOST_LOG_TRIVIAL(info) << "Connection closed";
 			} else {
 				BOOST_LOG_TRIVIAL(warning) << "Failed to read command: " << ec;
@@ -117,7 +116,7 @@ void client_connection::read_command()
 		
 		BOOST_LOG_TRIVIAL(info) << "Command received: " << cmd;
 		
-		ip::tcp::endpoint endpoint;
+		asio::ip::tcp::endpoint endpoint;
 		try {
 			endpoint = parse(cmd);
 			m_cache.async_lookup(endpoint, [=](bool hit, const boost::system::error_code &ec, std::shared_ptr<fs_entry> f) {
@@ -139,7 +138,7 @@ void client_connection::read_command()
 			std::stringstream msg_s;
 			msg_s << "ERROR: " << e.what() << "\r\n";
 			std::string msg = msg_s.str();
-			async_write(m_socket, buffer(msg), [&, self](const boost::system::error_code &ec, std::size_t size) {
+			async_write(m_socket, asio::buffer(msg), [&, self](const boost::system::error_code &ec, std::size_t size) {
 				if (ec) {
 					BOOST_LOG_TRIVIAL(error) << "Couldn't write error to client: " << ec;
 				}

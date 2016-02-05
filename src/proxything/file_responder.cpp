@@ -6,7 +6,7 @@
 
 using namespace proxything;
 
-file_responder::file_responder(io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> file):
+file_responder::file_responder(asio::io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> file):
 	m_service(service), m_client(client), m_file(file),
 	m_buf(PROXYTHING_FILE_BUFFER_SIZE)
 {
@@ -33,7 +33,7 @@ void file_responder::read_and_deliver()
 	
 	async_read(*m_file, m_buf, [this, self](const boost::system::error_code &ec, std::size_t size) {
 		if (ec) {
-			if (ec == error::eof) {
+			if (ec == asio::error::eof) {
 				BOOST_LOG_TRIVIAL(debug) << "Hit the end of the file";
 			} else {
 				BOOST_LOG_TRIVIAL(error) << "Couldn't read from remote: " << ec;
@@ -46,7 +46,7 @@ void file_responder::read_and_deliver()
 		if (size) {
 			async_write(m_client->socket(), m_buf, [this, self](const boost::system::error_code &ec, std::size_t size) {
 				if (ec) {
-					if (ec == error::eof) {
+					if (ec == asio::error::eof) {
 						BOOST_LOG_TRIVIAL(debug) << "Client connection closed during write";
 					} else {
 						BOOST_LOG_TRIVIAL(error) << "Couldn't write response: " << ec;

@@ -5,9 +5,8 @@
 #include <boost/log/trivial.hpp>
 
 using namespace proxything;
-using namespace boost::asio;
 
-remote_connection::remote_connection(io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> cache_file):
+remote_connection::remote_connection(asio::io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> cache_file):
 	m_service(service), m_socket(m_service), m_client(client),
 	m_cache_file(cache_file), m_buf(PROXYTHING_REMOTE_BUFFER_SIZE)
 {
@@ -46,7 +45,7 @@ void remote_connection::read_and_deliver()
 	
 	async_read(m_socket, m_buf, [this, self](const boost::system::error_code &ec, std::size_t size) {
 		if (ec) {
-			if (ec == error::eof) {
+			if (ec == asio::error::eof) {
 				BOOST_LOG_TRIVIAL(debug) << "Remote connection closed";
 			} else {
 				BOOST_LOG_TRIVIAL(error) << "Couldn't read from remote: " << ec;
@@ -57,7 +56,7 @@ void remote_connection::read_and_deliver()
 		BOOST_LOG_TRIVIAL(trace) << "Buffer size: " << m_buf.size();
 		
 		if (size) {
-			auto cache_buf = std::make_shared<streambuf>(size);
+			auto cache_buf = std::make_shared<asio::streambuf>(size);
 			buffer_copy(cache_buf->prepare(size), m_buf.data(), size);
 			cache_buf->commit(size);
 			async_write(*m_cache_file, *cache_buf, [this, cache_buf](const boost::system::error_code &ec, std::size_t size) {
@@ -70,7 +69,7 @@ void remote_connection::read_and_deliver()
 			
 			async_write(m_client->socket(), m_buf, [this, self](const boost::system::error_code &ec, std::size_t size) {
 				if (ec) {
-					if (ec == error::eof) {
+					if (ec == asio::error::eof) {
 						BOOST_LOG_TRIVIAL(debug) << "Client connection closed during write";
 					} else {
 						BOOST_LOG_TRIVIAL(error) << "Couldn't write response: " << ec;

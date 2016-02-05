@@ -6,13 +6,13 @@
 #include <thread>
 
 using namespace proxything;
-using namespace boost::asio;
+namespace asio = boost::asio;
 namespace fs = boost::filesystem;
 
 struct work_bound_test_helper
 {
 	work_bound_test_helper():
-		service(), work(new io_service::work(service)),
+		service(), work(new asio::io_service::work(service)),
 		thread([&]{ service.run(); }) { }
 	
 	~work_bound_test_helper()
@@ -21,14 +21,14 @@ struct work_bound_test_helper
 		thread.join();
 	}
 	
-	io_service service;
-	io_service::work *work;
+	asio::io_service service;
+	asio::io_service::work *work;
 	std::thread thread;
 };
 
 SCENARIO("work-bound handlers work")
 {
-	io_service service;
+	asio::io_service service;
 	work_bound_test_helper helper;
 	
 	// If you dispatch a task to an ASIO Service, then from it start an

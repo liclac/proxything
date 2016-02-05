@@ -8,12 +8,12 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	
 	/**
 	 * A filesystem entry.
 	 */
-	class fs_entry : public basic_io_object<fs_service>
+	class fs_entry : public asio::basic_io_object<fs_service>
 	{
 	public:
 		/**
@@ -21,7 +21,7 @@ namespace proxything
 		 * 
 		 * @param  service Parent IO service
 		 */
-		explicit fs_entry(io_service &service):
+		explicit fs_entry(asio::io_service &service):
 			basic_io_object<fs_service>(service) { }
 		
 		virtual ~fs_entry() { };

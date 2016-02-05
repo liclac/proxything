@@ -115,7 +115,7 @@ SCENARIO("service initialization works")
 		
 		THEN("it should have fs_service initialized")
 		{
-			has_service<fs_service>(a.service());
+			asio::has_service<fs_service>(a.service());
 		}
 	}
 }

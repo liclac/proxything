@@ -4,11 +4,10 @@
 #include <stdexcept>
 
 using namespace proxything;
-using namespace boost::asio;
 
 SCENARIO("commands can be parsed")
 {
-	io_service service;
+	asio::io_service service;
 	auto server = std::make_shared<proxy_server>(service);
 	auto client = std::make_shared<client_connection>(service, server);
 	
@@ -67,7 +66,7 @@ SCENARIO("commands can be parsed")
 	
 	GIVEN("an ipv4 address and port")
 	{
-		ip::tcp::endpoint ep = client->parse("127.0.0.1:1234");
+		asio::ip::tcp::endpoint ep = client->parse("127.0.0.1:1234");
 		
 		THEN("the address should be correct")
 		{
@@ -82,7 +81,7 @@ SCENARIO("commands can be parsed")
 	
 	GIVEN("an ipv6 address and port")
 	{
-		ip::tcp::endpoint ep = client->parse("2001:4860:4860::8888:1234");
+		asio::ip::tcp::endpoint ep = client->parse("2001:4860:4860::8888:1234");
 		
 		THEN("the address should be correct")
 		{
@@ -97,7 +96,7 @@ SCENARIO("commands can be parsed")
 	
 	GIVEN("a [bracketed] ipv6 address and port")
 	{
-		ip::tcp::endpoint ep = client->parse("[2001:4860:4860::8888]:1234");
+		asio::ip::tcp::endpoint ep = client->parse("[2001:4860:4860::8888]:1234");
 		
 		THEN("the address should be correct")
 		{

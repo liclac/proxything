@@ -7,7 +7,7 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	namespace po = boost::program_options;
 	
 	/**
@@ -19,7 +19,7 @@ namespace proxything
 		/**
 		 * Constructs a stopped server.
 		 */
-		proxy_server(io_service &service);
+		proxy_server(asio::io_service &service);
 		
 		virtual ~proxy_server();
 		
@@ -41,15 +41,15 @@ namespace proxything
 		
 		
 		/// Returns the IO service
-		inline io_service& service() { return m_service; }
+		inline asio::io_service& service() { return m_service; }
 		
 		/// Returns the acceptor
-		inline ip::tcp::acceptor& acceptor() { return m_acceptor; }
+		inline asio::ip::tcp::acceptor& acceptor() { return m_acceptor; }
 		
 	protected:
 		
-		io_service &m_service;				///< IO Service
-		ip::tcp::acceptor m_acceptor;		///< Acceptor for new connections
+		asio::io_service &m_service;				///< IO Service
+		asio::ip::tcp::acceptor m_acceptor;		///< Acceptor for new connections
 	};
 }
 

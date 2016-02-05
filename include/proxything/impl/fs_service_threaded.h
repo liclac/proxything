@@ -10,7 +10,7 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	namespace fs = boost::filesystem;
 	
 	namespace impl
@@ -18,7 +18,7 @@ namespace proxything
 		/**
 		 * Threaded implementation of fs_service.
 		 * 
-		 * This uses a worker thread an an io_service to queue up synchronous
+		 * This uses a worker thread an an asio::io_service to queue up synchronous
 		 * IO operations to be performed asynchronously. It uses strands to
 		 * ensure that reads and writes are performed sequentially.
 		 * 
@@ -43,15 +43,15 @@ namespace proxything
 				std::mutex final_mutex;		///< Finalization mutex
 				
 				/// Strand to ensure sequential access
-				std::unique_ptr<io_service::strand> strand;
+				std::unique_ptr<asio::io_service::strand> strand;
 			};
 			
 			/**
 			 * Constructor.
 			 */
 			fs_service_threaded():
-				m_iservice(), m_iwork(new io_service::work(m_iservice)),
-				m_thread(boost::bind(&io_service::run, &m_iservice))
+				m_iservice(), m_iwork(new asio::io_service::work(m_iservice)),
+				m_thread(boost::bind(&asio::io_service::run, &m_iservice))
 			{
 				
 			}
@@ -72,15 +72,15 @@ namespace proxything
 			/**
 			 * Implementation for fs_service::construct().
 			 */
-			void construct(io_service &service, implementation_type &impl)
+			void construct(asio::io_service &service, implementation_type &impl)
 			{
-				impl.strand = std::unique_ptr<io_service::strand>(new io_service::strand(m_iservice));
+				impl.strand = std::unique_ptr<asio::io_service::strand>(new asio::io_service::strand(m_iservice));
 			}
 			
 			/**
 			 * Implementation for fs_service::destroy().
 			 */
-			void destroy(io_service &service, implementation_type &impl)
+			void destroy(asio::io_service &service, implementation_type &impl)
 			{
 				impl.stream.close();
 			}
@@ -88,7 +88,7 @@ namespace proxything
 			/**
 			 * Implementation for fs_service::async_open().
 			 */
-			void async_open(io_service &service, implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, bool atomic, std::function<void(const boost::system::error_code &ec)> cb)
+			void async_open(asio::io_service &service, implementation_type &impl, const std::string &filename, std::ios_base::openmode mode, bool atomic, std::function<void(const boost::system::error_code &ec)> cb)
 			{
 				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
@@ -112,7 +112,7 @@ namespace proxything
 			/**
 			 * Implementation for fs_service::async_close().
 			 */
-			void async_close(io_service &service, implementation_type &impl, std::function<void(const boost::system::error_code &ec)> cb)
+			void async_close(asio::io_service &service, implementation_type &impl, std::function<void(const boost::system::error_code &ec)> cb)
 			{
 				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
@@ -131,7 +131,7 @@ namespace proxything
 			 * Implementation for fs_service::async_read_some().
 			 */
 			template<typename BufsT>
-			void async_read_some(io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
+			void async_read_some(asio::io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
 			{
 				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
@@ -142,7 +142,7 @@ namespace proxything
 						impl.stream.get(val);
 						
 						if (impl.stream.eof()) {
-							ec = error::eof;
+							ec = asio::error::eof;
 							break;
 						} else if (!impl.stream) {
 							ec = boost::system::error_code(errno, boost::system::get_generic_category());
@@ -161,7 +161,7 @@ namespace proxything
 			 * Implementaiton for fs_service::async_write_some().
 			 */
 			template<typename BufsT>
-			void async_write_some(io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
+			void async_write_some(asio::io_service &service, implementation_type &impl, const BufsT &buffers, std::function<void(const boost::system::error_code &ec, std::size_t size)> cb)
 			{
 				impl.strand->post([=, &service, &impl]{
 					boost::system::error_code ec;
@@ -190,8 +190,8 @@ namespace proxything
 			}
 			
 		protected:
-			io_service m_iservice;		///< Internal IO service
-			io_service::work *m_iwork;	///< Keeping the service alive
+			asio::io_service m_iservice;		///< Internal IO service
+			asio::io_service::work *m_iwork;	///< Keeping the service alive
 			ThreadT m_thread; 			///< Worker thread
 		};
 	}

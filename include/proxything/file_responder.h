@@ -6,7 +6,7 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	
 	class client_connection;
 	class fs_entry;
@@ -20,7 +20,7 @@ namespace proxything
 		/**
 		 * Constructs a file responder.
 		 */
-		file_responder(io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> file);
+		file_responder(asio::io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> file);
 		
 		virtual ~file_responder();
 		
@@ -34,7 +34,7 @@ namespace proxything
 		
 		
 		/// Returns the IO service
-		inline io_service& service() { return m_service; }
+		inline asio::io_service& service() { return m_service; }
 		
 		/// Returns the parent client
 		inline std::shared_ptr<client_connection> client() { return m_client; }
@@ -52,11 +52,11 @@ namespace proxything
 		
 		
 		
-		io_service &m_service;							///< IO Service
+		asio::io_service &m_service;							///< IO Service
 		std::shared_ptr<client_connection> m_client;	///< Parent connection
 		std::shared_ptr<fs_entry> m_file;				///< File handle
 		
-		streambuf m_buf;								///< Buffer
+		asio::streambuf m_buf;								///< Buffer
 	};
 }
 

@@ -3,11 +3,10 @@
 #include <proxything/util.h>
 
 using namespace proxything;
-using namespace boost::asio;
 
 SCENARIO("files can be opened")
 {
-	io_service service;
+	asio::io_service service;
 	
 	GIVEN("a file")
 	{
@@ -44,7 +43,7 @@ SCENARIO("files can be opened")
 				open_ec = ec;
 				if (ec) { return; }
 				
-				async_read(entry, buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
+				async_read(entry, asio::buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
 					read_ec = ec;
 					read_size = size;
 					
@@ -56,7 +55,7 @@ SCENARIO("files can be opened")
 			THEN("it shouldn't error")
 			{
 				REQUIRE_FALSE(open_ec);
-				REQUIRE(read_ec == error::eof);
+				REQUIRE(read_ec == asio::error::eof);
 			}
 			
 			THEN("it should read the correct data")
@@ -80,7 +79,7 @@ SCENARIO("files can be opened")
 				open_ec = ec;
 				if (ec) { return; }
 				
-				async_write(entry, buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
+				async_write(entry, asio::buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
 					write_ec = ec;
 					write_size = size;
 					
@@ -124,7 +123,7 @@ SCENARIO("files can be opened")
 				
 				exists_1 = fs::exists(path);
 				
-				async_write(entry, buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
+				async_write(entry, asio::buffer(buf), [&](const boost::system::error_code &ec, std::size_t size) {
 					write_ec = ec;
 					
 					exists_2 = fs::exists(path);

@@ -6,7 +6,7 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	
 	class client_connection;
 	class fs_entry;
@@ -20,7 +20,7 @@ namespace proxything
 		/**
 		 * Constructs a remote connection.
 		 */
-		remote_connection(io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> cache_file);
+		remote_connection(asio::io_service &service, std::shared_ptr<client_connection> client, std::shared_ptr<fs_entry> cache_file);
 		
 		virtual ~remote_connection();
 		
@@ -34,10 +34,10 @@ namespace proxything
 		
 		
 		/// Returns the IO service
-		inline io_service& service() { return m_service; }
+		inline asio::io_service& service() { return m_service; }
 		
 		/// Returns the underlying socket
-		inline ip::tcp::socket& socket() { return m_socket; }
+		inline asio::ip::tcp::socket& socket() { return m_socket; }
 		
 		/// Returns the parent client
 		inline std::shared_ptr<client_connection> client() { return m_client; }
@@ -55,13 +55,13 @@ namespace proxything
 		
 		
 		
-		io_service &m_service;							///< IO Service
-		ip::tcp::socket m_socket;						///< Socket
+		asio::io_service &m_service;							///< IO Service
+		asio::ip::tcp::socket m_socket;						///< Socket
 		
 		std::shared_ptr<client_connection> m_client;	///< Parent connection
 		std::shared_ptr<fs_entry> m_cache_file;			///< Cache file handle
 		
-		streambuf m_buf;								///< Buffer
+		asio::streambuf m_buf;								///< Buffer
 	};
 }
 

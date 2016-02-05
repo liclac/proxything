@@ -9,7 +9,7 @@
 
 namespace proxything
 {
-	using namespace boost::asio;
+	namespace asio = boost::asio;
 	namespace po = boost::program_options;
 	
 	class proxy_server;
@@ -97,7 +97,7 @@ namespace proxything
 		inline po::options_description& options() { return m_options; }
 		
 		/// Returns the IO Service
-		inline io_service& service() { return m_service; }
+		inline asio::io_service& service() { return m_service; }
 		
 		/// Returns all running background threads
 		inline std::vector<std::thread>& threads() { return m_threads; }
@@ -107,7 +107,7 @@ namespace proxything
 		
 	protected:
 		po::options_description m_options;		///< Option definitions
-		io_service m_service;					///< IO Service
+		asio::io_service m_service;					///< IO Service
 		std::vector<std::thread> m_threads;		///< Threads
 		std::shared_ptr<proxy_server> m_server;	///< Server
 	};
