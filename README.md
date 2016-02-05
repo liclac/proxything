@@ -20,8 +20,7 @@ CMake is my go-to build system for C and C++. It can cover for platform differen
 
 Of course, when I think "C++" and "networking", the first thing that springs to mind is the excellent **[ASIO](http://think-async.com/) library**. As C++11 pulled in all the stuff it needs into the standard library, it can run either with or without Boost, which leads to the next question: use Boost or not?
 
-Here, I decided that yes, I will use **Boost**. I could just as well have used [Poco](http://pocoproject.org/), as both Boost and Poco provide the functionality I need (logging and argument parsing), just with different approaches.  
-Boost has more utilities for various things and is overall very low-level, Poco has a more cohesive, opinionated foundation for building applications. It was basically a coin flip.
+Here, I decided that yes, I will use **Boost**. I could just as well have used [Poco](http://pocoproject.org/), as both Boost and Poco provide the functionality I need (logging and argument parsing), just with different approaches. Boost has more utilities for various things and is overall very low-level, Poco has a more cohesive, opinionated foundation for building applications. It was basically a coin flip.
 
 Next, I decided that, as a challenge, the server should be **single-threaded by default**. I eventually added support for running multiple threads to distribute the workload, but I wanted to make sure to make it **fully non-blocking**, rather than be lazy and spawn threads for every connection or something like that. It worked for nginx!
 
@@ -39,3 +38,5 @@ A couple of quick-fire choices:
     * Trampoline functions (eg. everything in `fs_entry`) that are just inline delegates to something else.
     * Trivially inline-able getters and setters.
 * No direct external access to member variables (named `m_`), except in structs.
+* Empty- or single-statement functions can be written on one line.
+* By calling Doxygen as part of the built process, undocumented functions become compiler warnings.
