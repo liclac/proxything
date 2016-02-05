@@ -22,7 +22,12 @@ app::app()
 	;
 }
 
-app::~app() { }
+app::~app()
+{
+	for (auto &thread : m_threads) {
+		thread.join();
+	}
+}
 
 
 
