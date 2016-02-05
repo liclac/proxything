@@ -26,23 +26,27 @@ namespace proxything
 		
 		
 		/**
-		 * Starts the server.
+		 * Listen on the specified port.
 		 * 
 		 * @param host Host to bind to
 		 * @param port Port to bind to
 		 */
-		void start(const std::string &host, unsigned short port);
+		void listen(const std::string &host, unsigned short port);
+		
+		/**
+		 * Start accepting connections.
+		 */
+		void accept();
 		
 		
 		
 		/// Returns the IO service
 		inline io_service& service() { return m_service; }
 		
+		/// Returns the acceptor
+		inline ip::tcp::acceptor& acceptor() { return m_acceptor; }
+		
 	protected:
-		/**
-		 * Accepts a single connection.
-		 */
-		void accept();
 		
 		io_service &m_service;				///< IO Service
 		ip::tcp::acceptor m_acceptor;		///< Acceptor for new connections

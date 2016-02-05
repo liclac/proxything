@@ -78,7 +78,8 @@ int app::run(po::variables_map args)
 	
 	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
 	auto s = std::make_shared<proxy_server>(m_service);
-	s->start(host, port);
+	s->listen(host, port);
+	s->accept();
 	
 	BOOST_LOG_TRIVIAL(trace) << "Starting IO Service...";
 	m_service.run();

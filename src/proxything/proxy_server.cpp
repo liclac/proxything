@@ -11,7 +11,7 @@ proxy_server::proxy_server(io_service &service):
 
 proxy_server::~proxy_server() { }
 
-void proxy_server::start(const std::string &host, unsigned short port)
+void proxy_server::listen(const std::string &host, unsigned short port)
 {
 	ip::tcp::endpoint endpoint(ip::address::from_string(host), port);
 	m_acceptor.open(endpoint.protocol());
@@ -20,8 +20,6 @@ void proxy_server::start(const std::string &host, unsigned short port)
 	m_acceptor.listen();
 	
 	BOOST_LOG_TRIVIAL(info) << "Listening on " << endpoint.address().to_string() << ":" << endpoint.port();
-	
-	accept();
 }
 
 void proxy_server::accept()
