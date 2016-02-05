@@ -3,6 +3,8 @@
 
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include <vector>
+#include <thread>
 
 namespace proxything
 {
@@ -77,6 +79,7 @@ namespace proxything
 		
 		po::options_description m_options;		///< Option definitions
 		io_service m_service;					///< IO Service
+		std::vector<std::thread> m_threads;		///< Threads
 	};
 }
 

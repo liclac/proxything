@@ -17,6 +17,7 @@ app::app()
 		("quiet,q", "show less output")
 		("verbose,v", "show more output")
 		("debug,V", "show even more output")
+		("threads,t", po::value<unsigned int>()->default_value(1), "number of threads to use")
 		("host,h", po::value<std::string>()->default_value("127.0.0.1"), "host to bind to")
 		("port,p", po::value<unsigned short>()->default_value(12345), "port to bind to")
 	;
@@ -80,6 +81,14 @@ int app::run(po::variables_map args)
 	auto s = std::make_shared<proxy_server>(m_service);
 	s->listen(host, port);
 	s->accept();
+	
+	unsigned int num_threads = args["threads"].as<unsigned int>();
+	if (num_threads > 0) {
+		BOOST_LOG_TRIVIAL(trace) << "Starting " << num_threads - 1 << " background threads...";
+		for (unsigned int i = 0; i < num_threads - 1; i++) {
+			m_threads.emplace_back([this]{ m_service.run(); });
+		}
+	}
 	
 	BOOST_LOG_TRIVIAL(trace) << "Starting IO Service...";
 	m_service.run();
