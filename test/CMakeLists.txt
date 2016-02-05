@@ -2,6 +2,7 @@ include_directories("${CMAKE_SOURCE_DIR}/vendor/catch/include")
 
 set(proxything_TESTS
 	test_test
+	test_app
 	test_proxy_server
 	test_client_connection
 	test_fs_entry
