@@ -72,6 +72,8 @@ int app::run(po::variables_map args)
 		return 0;
 	}
 	
+	init_services(args);
+	
 	init_server(args);
 	m_server->accept();
 	
