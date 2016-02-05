@@ -43,9 +43,10 @@ SCENARIO("argument parsing works")
 	{
 		args_helper helper({});
 		
-		THEN("argc should be 1")
+		THEN("argc + argv should be correct")
 		{
 			REQUIRE(helper.argc == 1);
+			CHECK(std::string(helper.argv[0]) == "proxything");
 		}
 		
 		WHEN("it's parsed")
@@ -67,14 +68,16 @@ SCENARIO("argument parsing works")
 	{
 		args_helper helper({"--gibberish"});
 		
-		THEN("argc should be 2")
+		THEN("argc + argv should be correct")
 		{
 			REQUIRE(helper.argc == 2);
+			CHECK(std::string(helper.argv[0]) == "proxything");
+			CHECK(std::string(helper.argv[1]) == "--gibberish");
 		}
 		
 		THEN("parsing should fail")
 		{
-			REQUIRE_THROWS(a.parse_args(helper.argc, helper.argv));
+			CHECK_THROWS_AS(a.parse_args(helper.argc, helper.argv), boost::program_options::error);
 		}
 	}
 	
@@ -82,14 +85,9 @@ SCENARIO("argument parsing works")
 	{
 		args_helper helper({"--help"});
 		
-		WHEN("it's parsed")
+		THEN("it should be present")
 		{
-			auto args = a.parse_args(helper.argc, helper.argv);
-			
-			THEN("the flag should be present")
-			{
-				CHECK(args.count("help") == 1);
-			}
+			CHECK(a.parse_args(helper.argc, helper.argv).count("help") == 1);
 		}
 	}
 	
@@ -97,14 +95,9 @@ SCENARIO("argument parsing works")
 	{
 		args_helper helper({"-?"});
 		
-		WHEN("it's parsed")
+		THEN("the flag should be present")
 		{
-			auto args = a.parse_args(helper.argc, helper.argv);
-			
-			THEN("the flag should be present")
-			{
-				CHECK(args.count("help") == 1);
-			}
+			CHECK(a.parse_args(helper.argc, helper.argv).count("help") == 1);
 		}
 	}
 }
