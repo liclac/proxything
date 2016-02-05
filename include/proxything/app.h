@@ -5,11 +5,14 @@
 #include <boost/program_options.hpp>
 #include <vector>
 #include <thread>
+#include <memory>
 
 namespace proxything
 {
 	using namespace boost::asio;
 	namespace po = boost::program_options;
+	
+	class proxy_server;
 	
 	/**
 	 * CLI application frontend for Proxy Thing.
@@ -77,9 +80,17 @@ namespace proxything
 		 */
 		void init_services(po::variables_map args);
 		
+		/**
+		 * Initializes the proxy server.
+		 * 
+		 * @param args Arguments
+		 */
+		void init_server(po::variables_map args);
+		
 		po::options_description m_options;		///< Option definitions
 		io_service m_service;					///< IO Service
 		std::vector<std::thread> m_threads;		///< Threads
+		std::shared_ptr<proxy_server> m_server;	///< Server
 	};
 }
 

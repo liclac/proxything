@@ -6,7 +6,6 @@
 #include <boost/log/trivial.hpp>
 #include <iostream>
 #include <string>
-#include <memory>
 
 using namespace proxything;
 
@@ -73,14 +72,8 @@ int app::run(po::variables_map args)
 		return 0;
 	}
 	
-	BOOST_LOG_TRIVIAL(trace) << "Reading config...";
-	std::string host = args["host"].as<std::string>();
-	unsigned short port = args["port"].as<unsigned short>();
-	
-	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
-	auto s = std::make_shared<proxy_server>(m_service);
-	s->listen(host, port);
-	s->accept();
+	init_server(args);
+	m_server->accept();
 	
 	unsigned int num_threads = args["threads"].as<unsigned int>();
 	if (num_threads > 0) {
@@ -117,4 +110,14 @@ void app::init_logging(po::variables_map args)
 void app::init_services(po::variables_map args)
 {
 	add_service<fs_service>(m_service, new fs_service(m_service));
+}
+
+void app::init_server(po::variables_map args)
+{
+	std::string host = args["host"].as<std::string>();
+	unsigned short port = args["port"].as<unsigned short>();
+	
+	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
+	m_server = std::make_shared<proxy_server>(m_service);
+	m_server->listen(host, port);
 }
