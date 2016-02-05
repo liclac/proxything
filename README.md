@@ -30,6 +30,8 @@ So, I started digging through the ASIO docs. Turns out, you can provide your own
 
 The default (and currently only) implementation uses a backgrund thread and an ASIO service as a task queue, to queue up synchronous disk operations on that thread. This keeps the server thread(s) responsive, and shouldn't become a bottleneck before your disk IO does (a claim that needs benchmarking to back up; increasing the number of IO threads is easy though).
 
+Atomic writes are used to ensure that if two threads connect to the same server, they will not corrupt the cache. Cache data is asynchronously written to a temporary file, which is then moved over the destination file. Race conditions are thus resolved by that the last one to finish overwrites the other.
+
 A couple of quick-fire choices:
 
 * In a "real" application, there would likely be a clear separation of subsystems (proxy, cache, etc), all with access to the application configuration (merged between commandline arguments and a configuration file). Not necessary here, as it's a very simple application, and all the configuration options we have can be set by `app` on startup.
