@@ -75,18 +75,12 @@ int app::run(po::variables_map args)
 	init_server(args);
 	m_server->accept();
 	
-	unsigned int num_threads = args["threads"].as<unsigned int>();
-	if (num_threads > 0) {
-		BOOST_LOG_TRIVIAL(trace) << "Starting " << num_threads - 1 << " background threads...";
-		for (unsigned int i = 0; i < num_threads - 1; i++) {
-			m_threads.emplace_back([this]{ m_service.run(); });
-		}
-	}
+	BOOST_LOG_TRIVIAL(trace) << "Starting...";
 	
-	BOOST_LOG_TRIVIAL(trace) << "Starting IO Service...";
+	init_threads();
 	m_service.run();
 	
-	BOOST_LOG_TRIVIAL(trace) << "IO Service Stopped!";
+	BOOST_LOG_TRIVIAL(trace) << "Stopped!";
 	
 	return 0;
 }
@@ -120,4 +114,16 @@ void app::init_server(po::variables_map args)
 	BOOST_LOG_TRIVIAL(trace) << "Creating a server...";
 	m_server = std::make_shared<proxy_server>(m_service);
 	m_server->listen(host, port);
+}
+
+void app::init_threads(po::variables_map args)
+{
+	unsigned int num_threads = args["threads"].as<unsigned int>();
+	
+	if (num_threads > 0) {
+		BOOST_LOG_TRIVIAL(trace) << "Starting " << num_threads - 1 << " background threads...";
+		for (unsigned int i = 0; i < num_threads - 1; i++) {
+			m_threads.emplace_back([this]{ m_service.run(); });
+		}
+	}
 }

@@ -87,6 +87,13 @@ namespace proxything
 		 */
 		void init_server(po::variables_map args);
 		
+		/**
+		 * Initializes background threads.
+		 * 
+		 * @param args Arguments
+		 */
+		void init_threads(po::variables_map args);
+		
 		po::options_description m_options;		///< Option definitions
 		io_service m_service;					///< IO Service
 		std::vector<std::thread> m_threads;		///< Threads
