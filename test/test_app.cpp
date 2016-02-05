@@ -1,5 +1,7 @@
 #include <catch.hpp>
 #include <proxything/app.h>
+#include <proxything/proxy_server.h>
+#include <proxything/fs_service.h>
 #include <iostream>
 
 using namespace proxything;
@@ -98,6 +100,79 @@ SCENARIO("argument parsing works")
 		THEN("the flag should be present")
 		{
 			CHECK(a.parse_args(helper.argc, helper.argv).count("help") == 1);
+		}
+	}
+}
+
+SCENARIO("service initialization works")
+{
+	app a;
+	
+	WHEN("services are initialized")
+	{
+		args_helper args;
+		a.init_services(a.parse_args(args.argc, args.argv));
+		
+		THEN("it should have fs_service initialized")
+		{
+			has_service<fs_service>(a.service());
+		}
+	}
+}
+
+SCENARIO("server initialization works")
+{
+	app a;
+	
+	WHEN("the server is initialied")
+	{
+		args_helper args;
+		a.init_server(a.parse_args(args.argc, args.argv));
+		
+		THEN("it should have a listening server")
+		{
+			REQUIRE(a.server());
+			CHECK(a.server()->acceptor().is_open());
+		}
+	}
+	
+	WHEN("host/port options are specified")
+	{
+		args_helper args({"--host", "0.0.0.0", "--port", "12346"});
+		a.init_server(a.parse_args(args.argc, args.argv));
+		
+		THEN("it should listen on those")
+		{
+			REQUIRE(a.server());
+			CHECK(a.server()->acceptor().local_endpoint().address().to_string() == "0.0.0.0");
+			CHECK(a.server()->acceptor().local_endpoint().port() == 12346);
+		}
+	}
+}
+
+SCENARIO("thread initialization works")
+{
+	app a;
+	
+	WHEN("no arguments are given")
+	{
+		args_helper args;
+		a.init_threads(a.parse_args(args.argc, args.argv));
+		
+		THEN("it should be single-threaded")
+		{
+			CHECK(a.threads().size() == 0);
+		}
+	}
+	
+	WHEN("background threads are requested")
+	{
+		args_helper args({"--threads", "2"});
+		a.init_threads(a.parse_args(args.argc, args.argv));
+		
+		THEN("it should spawn n-1 threads")
+		{
+			CHECK(a.threads().size() == 1);
 		}
 	}
 }
