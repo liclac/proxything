@@ -192,7 +192,7 @@ namespace proxything
 		protected:
 			asio::io_service m_iservice;		///< Internal IO service
 			asio::io_service::work *m_iwork;	///< Keeping the service alive
-			ThreadT m_thread; 			///< Worker thread
+			ThreadT m_thread; 					///< Worker thread
 		};
 	}
 }
